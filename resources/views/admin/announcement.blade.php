@@ -5,13 +5,20 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
-            </div>
-        </div>
-    </div>
+
+
+    <x-my-components.dash-card title="Categories List" iconColor="bg-indigo-500" icon="fas fa-chart-bar" class="w-full"
+        cardClass="mt-4">
+
+        {{-- <x-my-components.dash-table :headers="['#', 'Name', 'Action']">
+            @foreach ($categories as $categorie)
+                <tr class="border-b border-gray-200 dark:border-gray-600">
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $categorie->id }}</td>
+                    <td class="px-6 py-4 whitespace-nowrap">{{ $categorie->name }}</td>
+                    <td class=""><a href="{{ route('admin.users.edit', $user->id) }}">Edit</td>
+                </tr>
+            @endforeach
+        </x-my-components.dash-table> --}}
+    </x-my-components.dash-card>
+
 </x-app-layout>

@@ -8,4 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 class Category extends Model
 {
     use HasFactory;
+    public function announcements()
+    {
+        return $this->hasMany(Announcement::class);
+    }
 }

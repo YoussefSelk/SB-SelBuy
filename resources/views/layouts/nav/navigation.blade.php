@@ -20,7 +20,9 @@
                         <x-slot name="trigger">
                             <x-nav-link class="cursor-pointer">
                                 {{ __('Announcements') }}
-                                <i class="fa-solid fa-caret-down"></i>
+                                <span class="ml-2">
+                                    <i class="fa fa-solid fa-caret-down"></i>
+                                </span>
                             </x-nav-link>
                         </x-slot>
                         <x-slot name="content">

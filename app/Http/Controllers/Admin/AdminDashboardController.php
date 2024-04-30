@@ -6,6 +6,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
+use App\Models\Category;
+use App\Models\User;
 
 class AdminDashboardController extends Controller
 {
@@ -18,6 +20,8 @@ class AdminDashboardController extends Controller
     public function announcement() //admin announcement View
     {
         $announcements = Announcement::all();
-        return view('admin.announcement')->with(compact('announcements'));
+        $users = User::where('is_admin', 0)->get();
+        $categories = Category::all();
+        return view('admin.announcement')->with(compact('announcements'))->with(compact('users'))->with(compact('categories'));
     }
 }

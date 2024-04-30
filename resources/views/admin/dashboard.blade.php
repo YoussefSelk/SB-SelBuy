@@ -7,10 +7,15 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-                    {{ __("You're logged in!") }}
-                </div>
+            <div class="flex flex-wrap -mx-4">
+                <!-- Card 1 -->
+                <x-my-components.dash-card title="Dashboard Card Title" iconColor="bg-indigo-500" icon="fas fa-chart-bar"
+                    width="w-full">
+                    <p class="text-red-500 dark:text-gray-400">hi</p>
+                </x-my-components.dash-card>
+
+
+                <!-- Add more cards as needed -->
             </div>
         </div>
     </div>
