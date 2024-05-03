@@ -16,4 +16,6 @@
         </tbody>
     </table>
 </div>
+
+
 @include('includes.DataTable')

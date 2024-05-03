@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\Role;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -29,7 +30,7 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         // Check if the authenticated user is an admin
-        if (auth()->user()->is_admin) {
+        if (Auth::user()->hasRole('Admin')) {
             return redirect()->intended(route('dashboard', absolute: false));
         } else {
             return redirect('/'); // Redirect non-admin users to the home page

@@ -7,21 +7,148 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\Category;
+use App\Models\Role;
 use App\Models\User;
+use Illuminate\Auth\Events\Registered;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 
 class AdminDashboardController extends Controller
 {
-    //View Functions
+
+    ///////////////////////////////// VIEW  /////////////////////////////////
     public function index() //admin dashboard View
     {
-        return view('admin.dashboard');
+        $announcements = Announcement::all();
+        $users = User::all();
+        $categories = Category::all();
+        return view('admin.dashboard')->with(compact('announcements'))->with(compact('users'))->with(compact('categories'));
     }
 
     public function announcement() //admin announcement View
     {
         $announcements = Announcement::all();
-        $users = User::where('is_admin', 0)->get();
+        $users = User::all();
         $categories = Category::all();
         return view('admin.announcement')->with(compact('announcements'))->with(compact('users'))->with(compact('categories'));
+    }
+    public function users() //admin Users View
+    {
+        $users = User::all();
+        $roles = Role::all();
+
+        return view('admin.user')->with(compact('users'))->with(compact('roles'));
+    }
+
+    public function categories() //admin Categories View
+    {
+        $categories = Category::all();
+        return view('admin.category')->with(compact('categories'));
+    }
+
+    public function edit_user_view($id)
+    {
+        $user = User::find($id);
+        return view('admin.CRUD.edit_user')->with(compact('user'));
+    }
+
+    public function user_details($id)
+    {
+        $user = User::find($id);
+        return view('admin.CRUD.user_details')->with(compact('user'));
+    }
+    ///////////////////////////////// CRUD  /////////////////////////////////
+
+
+    public function edit_user(Request $request, $id)
+    {
+        $request->validate([
+            'name' => ['nullable', 'string', 'max:255'],
+            'email' => ['nullable', 'string', 'email', 'max:255', Rule::unique('users')->ignore($id)],
+            'password' => ['nullable',],
+            'phone' => ['nullable',],
+        ]);
+
+        $user = User::findOrFail($id);
+
+        $user->update([
+            'name' => $request->input('name'),
+            'email' => $request->input('email'),
+            'password' => $request->input('password') ? Hash::make($request->input('password')) : $user->password,
+            'phone' => $request->input('phone'),
+        ]);
+
+        return redirect()->route('admin.users')
+            ->with('success', 'User updated successfully.');
+    }
+
+    public function delete_user($id)
+    {
+
+        $user = User::find($id);
+        $announcements = Announcement::where('user_id', $user->id)->get();
+        if ($announcements) {
+            foreach ($announcements as $announcement) {
+                $announcement->delete();
+            }
+        }
+
+        $roles = $user->roles;
+        if ($roles) {
+            foreach ($roles as $role) {
+                $user->removeRole($role->name);
+            }
+        }
+
+        $user->delete();
+        return redirect()->route('admin.users')
+            ->with('success', 'User deleted successfully.');
+    }
+    /**
+     * Handle an incoming registration request.
+     *
+     * @throws \Illuminate\Validation\ValidationException
+     */
+    public function add_user(Request $request)
+    {
+
+        $name = $request->input('name');
+        $email = $request->input('email');
+        $password = $request->input('password');
+        $ville = $request->input('city');
+        $phone = $request->input('phone');
+        $role = $request->input('role');
+
+        $rules = [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'confirmed'],
+            'city' => ['required'],
+            'phone' => ['required'],
+            'role' => ['required'],
+        ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+
+        $user = User::create([
+            'name' =>  $name,
+            'email' => $email,
+            'password' => Hash::make($password),
+            'ville' => $ville,
+            'phone' => $phone,
+        ]);
+
+        $Role = Role::where('name', $role)->first();
+        $user->roles()->attach($Role);
+
+        event(new Registered($user));
+        return redirect()->route('admin.users')
+            ->with('success', 'User created successfully.');
     }
 }

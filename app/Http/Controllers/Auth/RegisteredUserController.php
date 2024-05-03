@@ -11,6 +11,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Illuminate\View\View;
+use App\Models\Role;
+use Illuminate\Validation\Rule;
 
 class RegisteredUserController extends Controller
 {
@@ -27,31 +29,40 @@ class RegisteredUserController extends Controller
      *
      * @throws \Illuminate\Validation\ValidationException
      */
-    
 
-    public function store(Request $request): RedirectResponse
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
+     public function store(Request $request): RedirectResponse
+     {
 
-        event(new Registered($user));
+         $request->validate([
+             'name' => ['required', 'string', 'max:255'],
+             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+             'password' => ['required', 'string', Rules\Password::defaults(), 'confirmed'],
+             'city' => ['required'],
+             'phone' => ['required'],
+         ]);
 
-        Auth::login($user);
+         $user = User::create([
+             'name' => $request->input('name'),
+             'email' => $request->input('email'),
+             'password' => Hash::make($request->input('password')),
+             'ville' => $request->input('city'),
+             'phone' => $request->input('phone'),
+         ]);
 
-        // Check if the registered user is an admin
-        if ($user->is_admin) {
-            return redirect(route('dashboard', absolute: false));
-        } else {
-            return redirect('/'); // Redirect non-admin users to the home page
-        }
-    }
+         $buyerRole = Role::where('name', 'Buyer')->first();
+         $user->roles()->attach($buyerRole);
+
+         event(new Registered($user));
+
+         Auth::login($user);
+
+         // Redirect users based on their role
+         if ($user->hasRole('Admin')) {
+             return redirect()->route('dashboard');
+         } else {
+             return redirect('/');
+         }
+     }
+
 }

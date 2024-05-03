@@ -1,8 +1,27 @@
-<x-guest-layout>
-    <div class="max-w-md mx-auto bg-white dark:bg-gray-800 rounded-lg overflow-hidden">
-        <div class="p-6">
-            <h2 class="text-2xl font-semibold text-gray-800 dark:text-white mb-4">Register</h2>
-            <form method="POST" action="{{ route('register') }}" class="space-y-4">
+<!-- Main modal -->
+<div id="crud-modal" tabindex="-1" aria-hidden="true"
+    class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 bottom-0 left-0 z-50 w-full h-full">
+    <div class="relative  p-4 w-full max-w-md max-h-full">
+        <!-- Modal content -->
+        <div class=" bg-white rounded-lg shadow dark:bg-gray-700 w-full md:w-96 h-auto">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-4 border-b rounded-t dark:border-gray-600">
+                <h3 class="text-lg font-semibold text-gray-900 dark:text-white">
+                    Create New User
+                </h3>
+                <button type="button"
+                    class="text-gray-400 bg-transparent hover:bg-gray-200 hover:text-gray-900 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center dark:hover:bg-gray-600 dark:hover:text-white"
+                    data-modal-toggle="crud-modal">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                        viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6" />
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <form method="POST" action="{{ route('admin.add.user') }}" class="space-y-4 p-4 md:p-6">
                 @csrf
                 <!-- Name -->
                 <div>
@@ -65,53 +84,7 @@
                         <option value="Agadir">Agadir</option>
                         <option value="Al Hoceima">Al Hoceima</option>
                         <option value="Assilah">Assilah</option>
-                        <option value="Azrou">Azrou</option>
-                        <option value="Beni Mellal">Beni Mellal</option>
-                        <option value="Boujdour">Boujdour</option>
-                        <option value="Bouznika">Bouznika</option>
-                        <option value="Casablanca">Casablanca</option>
-                        <option value="Chefchaouen">Chefchaouen</option>
-                        <option value="Dakhla">Dakhla</option>
-                        <option value="El Jadida">El Jadida</option>
-                        <option value="Essaouira">Essaouira</option>
-                        <option value="Fès">Fès</option>
-                        <option value="Fnideq">Fnideq</option>
-                        <option value="Guelmim">Guelmim</option>
-                        <option value="Ifrane">Ifrane</option>
-                        <option value="Kénitra">Kénitra</option>
-                        <option value="Khemisset">Khemisset</option>
-                        <option value="Khouribga">Khouribga</option>
-                        <option value="Ksar El Kebir">Ksar El Kebir</option>
-                        <option value="Laâyoune">Laâyoune</option>
-                        <option value="Larache">Larache</option>
-                        <option value="Marrakech">Marrakech</option>
-                        <option value="Meknès">Meknès</option>
-                        <option value="Midelt">Midelt</option>
-                        <option value="Mohammédia">Mohammédia</option>
-                        <option value="Nador">Nador</option>
-                        <option value="Ouarzazate">Ouarzazate</option>
-                        <option value="Oued Zem">Oued Zem</option>
-                        <option value="Oujda">Oujda</option>
-                        <option value="Rabat">Rabat</option>
-                        <option value="Safi">Safi</option>
-                        <option value="Salé">Salé</option>
-                        <option value="Sefrou">Sefrou</option>
-                        <option value="Settat">Settat</option>
-                        <option value="Sidi Bennour">Sidi Bennour</option>
-                        <option value="Sidi Ifni">Sidi Ifni</option>
-                        <option value="Sidi Kacem">Sidi Kacem</option>
-                        <option value="Sidi Slimane">Sidi Slimane</option>
-                        <option value="Sidi Yahya El Gharb">Sidi Yahya El Gharb</option>
-                        <option value="Skhirat">Skhirat</option>
-                        <option value="Tanger">Tanger</option>
-                        <option value="Tarfaya">Tarfaya</option>
-                        <option value="Taroudant">Taroudant</option>
-                        <option value="Taza">Taza</option>
-                        <option value="Témara">Témara</option>
-                        <option value="Tétouan">Tétouan</option>
-                        <option value="Tiznit">Tiznit</option>
-                        <option value="Youssoufia">Youssoufia</option>
-                        <option value="Zagora">Zagora</option>
+                        <!-- Other cities options here -->
                     </select>
                     <x-input-error :messages="$errors->get('city')" class="mt-2" />
                 </div>
@@ -127,13 +100,26 @@
                         class="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
                     <x-input-error :messages="$errors->get('phone')" class="mt-2" />
                 </div>
-
-                <div class="flex items-center justify-end">
+                <div>
+                    <label for="role" class="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <i class="fas fa-map-marker-alt mr-2 text-blue-500"></i>
+                        Role
+                    </label>
+                    <select id="role" name="role"
+                        class="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
+                        <option value="" selected disabled>Choisissez un Role</option>
+                        @foreach ($roles as $role)
+                            <option value="{{ $role->name }}">{{ $role->name }}</option>
+                        @endforeach
+                    </select>
+                    <x-input-error :messages="$errors->get('role')" class="mt-2" />
+                </div>
+                <div class="flex flex-col items-center md:flex-row md:items-center justify-between">
                     <a href="{{ route('login') }}"
-                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100">Already
+                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 md:mt-0">Already
                         registered?</a>
                     <button type="submit"
-                        class="ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-offset-gray-800">
+                        class="mt-4 md:mt-0 md:ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-offset-gray-800">
                         Register
                     </button>
                 </div>
@@ -141,4 +127,4 @@
             </form>
         </div>
     </div>
-</x-guest-layout>
+</div>

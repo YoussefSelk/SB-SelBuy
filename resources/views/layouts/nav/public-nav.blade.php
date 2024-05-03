@@ -30,6 +30,11 @@
             <div x-show="open" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-50">
                 <div class="py-1">
                     @auth
+                        @if (Auth::user()->hasRole('Admin'))
+                            <x-dropdown-link :href="route('dashboard')">
+                                {{ __('Dashboard') }}
+                            </x-dropdown-link>
+                        @endif
                         <!-- If the user is authenticated -->
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}

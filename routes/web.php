@@ -13,6 +13,12 @@ include 'web/BackOffice/dashboard.php';
 //The Announcement Routes (BackOffice)
 include 'web/BackOffice/Announcement.php';
 
+//The Users Routes (BackOffice)
+include 'web/BackOffice/users.php';
+
+//The Users Routes (BackOffice)
+include 'web/BackOffice/categories.php';
+
 //The Profile Routes (Others)
 include 'web/others/profile.php';
 
