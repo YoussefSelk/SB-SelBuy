@@ -18,8 +18,10 @@ use Illuminate\Support\Facades\Validator;
 
 class AdminDashboardController extends Controller
 {
+    /////////////////////////////////////////////////////////////////////////
+    /////////////////////////////////  VIEW  /////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 
-    ///////////////////////////////// VIEW  /////////////////////////////////
     public function index() //admin dashboard View
     {
         $announcements = Announcement::all();
@@ -52,16 +54,27 @@ class AdminDashboardController extends Controller
     public function edit_user_view($id)
     {
         $user = User::find($id);
-        return view('admin.CRUD.edit_user')->with(compact('user'));
+        return view('admin.CRUD.user.edit_user')->with(compact('user'));
     }
 
     public function user_details($id)
     {
         $user = User::find($id);
-        return view('admin.CRUD.user_details')->with(compact('user'));
+        return view('admin.CRUD.user.user_details')->with(compact('user'));
     }
-    ///////////////////////////////// CRUD  /////////////////////////////////
+    public function edit_category_view($id)
+    {
+        $category = Category::find($id);
+        if (!$category) {
+            return redirect()->route('admin.categories')
+                ->with('warning', 'Category not found.');
+        }
+        return view('admin.CRUD.category.edit_category')->with(compact('category'));
+    }
 
+    /////////////////////////////////////////////////////////////////////////
+    ///////////////////////////////// CRUD  /////////////////////////////////
+    /////////////////////////////////////////////////////////////////////////
 
     public function edit_user(Request $request, $id)
     {
@@ -89,6 +102,13 @@ class AdminDashboardController extends Controller
     {
 
         $user = User::find($id);
+
+        if (!$user) {
+            return redirect()->route('admin.users')
+                ->with('warning', 'User not found.');
+        }
+
+
         $announcements = Announcement::where('user_id', $user->id)->get();
         if ($announcements) {
             foreach ($announcements as $announcement) {
@@ -150,5 +170,49 @@ class AdminDashboardController extends Controller
         event(new Registered($user));
         return redirect()->route('admin.users')
             ->with('success', 'User created successfully.');
+    }
+
+    public function add_category(Request $request)
+    {
+        $name = $request->input('name');
+        $rules = [
+            'name' => ['required', 'string', 'max:255'],
+        ];
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator)->withInput();
+        }
+        $category = Category::create([
+            'name' =>  $name,
+        ]);
+
+        return redirect()->route('admin.categories')
+            ->with('success', 'Category created successfully.');
+    }
+
+    public function delete_category($id)
+    {
+        $category = Category::find($id);
+        if (!$category) {
+            return redirect()->route('admin.categories')
+                ->with('warning', 'Category not found.');
+        }
+        $category->delete();
+        return redirect()->route('admin.categories')
+            ->with('success', 'Category deleted successfully.');
+    }
+
+    public function edit_category(Request $request, $id)
+    {
+        $category = Category::find($id);
+        if (!$category) {
+            return redirect()->route('admin.categories')
+                ->with('warning', 'Category not found.');
+        }
+        $category->update([
+            'name' => $request->input('name'),
+        ]);
+        return redirect()->route('admin.categories')
+            ->with('success', 'Category updated successfully.');
     }
 }

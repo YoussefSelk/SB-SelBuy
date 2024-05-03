@@ -1,16 +1,18 @@
 <x-app-layout>
     <div
         class="p-6 mb-4 bg-white rounded-md shadow-md overflow-hidden flex flex-col md:flex-row items-center justify-between dark:bg-dark-eval-1">
-
-        <span class="text-xl md:text-2xl flex items-center justify-center"><i
-                class="fas fa-users text-4xl md:text-5xl text-blue-500 mr-4"></i> {{ count($users) }}</span>
-        <!-- Modal toggle -->
+        <div class="flex items-center">
+            <i class="fas fa-users text-4xl md:text-5xl text-blue-500 mr-4"></i>
+            <span class="text-xl md:text-2xl">{{ count($users) }}</span>
+        </div>
+        <!-- Button to toggle modal -->
         <button data-modal-target="crud-modal" data-modal-toggle="crud-modal"
-            class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
-            type="button">
-            Toggle modal
+            class="block bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg text-lg px-5 py-2.5 text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            <i class="fas fa-user-plus text-xl mr-2"></i>
+            Add User
         </button>
     </div>
+
 
 
     <div class="p-6 bg-white rounded-md shadow-md overflow-hidden">

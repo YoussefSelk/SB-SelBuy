@@ -109,15 +109,24 @@
                         class="mt-1 block w-full px-4 py-2 rounded-md border-gray-300 dark:border-gray-600 shadow-sm focus:border-blue-500 focus:ring-blue-500 dark:bg-gray-700 dark:text-white">
                         <option value="" selected disabled>Choisissez un Role</option>
                         @foreach ($roles as $role)
-                            <option value="{{ $role->name }}">{{ $role->name }}</option>
+                            @if (Auth::user()->hasRole('Admin') && !Auth::user()->hasRole('SuperAdmin'))
+                                @if ($role->name == 'Admin' || $role->name == 'SuperAdmin')
+                                    @continue
+                                @else
+                                    <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                @endif
+                            @elseif (Auth::user()->hasRole('SuperAdmin') && Auth::user()->hasRole('SuperAdmin'))
+                                @if ($role->name == 'SuperAdmin')
+                                    @continue
+                                @else
+                                    <option value="{{ $role->name }}">{{ $role->name }}</option>
+                                @endif
+                            @endif
                         @endforeach
                     </select>
                     <x-input-error :messages="$errors->get('role')" class="mt-2" />
                 </div>
                 <div class="flex flex-col items-center md:flex-row md:items-center justify-between">
-                    <a href="{{ route('login') }}"
-                        class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 md:mt-0">Already
-                        registered?</a>
                     <button type="submit"
                         class="mt-4 md:mt-0 md:ml-4 bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-offset-gray-800">
                         Register
