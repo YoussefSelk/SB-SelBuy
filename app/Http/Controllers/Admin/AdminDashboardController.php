@@ -6,6 +6,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
+use App\Models\AnnouncementImage;
 use App\Models\Category;
 use App\Models\Role;
 use App\Models\User;
@@ -13,6 +14,7 @@ use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
 
@@ -71,7 +73,15 @@ class AdminDashboardController extends Controller
         }
         return view('admin.CRUD.category.edit_category')->with(compact('category'));
     }
-
+    public function details_annoucement($id)
+    {
+        $announcement = Announcement::find($id);
+        if (!$announcement) {
+            return redirect()->route('admin.announcements')
+                ->with('warning', 'Announcement not found.');
+        }
+        return view('admin.CRUD.announcement.announcement-details')->with(compact('announcement'));
+    }
     /////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// CRUD  /////////////////////////////////
     /////////////////////////////////////////////////////////////////////////
@@ -214,5 +224,105 @@ class AdminDashboardController extends Controller
         ]);
         return redirect()->route('admin.categories')
             ->with('success', 'Category updated successfully.');
+    }
+
+    public function add_annoucement(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'description' => 'required|string',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'user' => 'required|exists:users,id',
+            'category' => 'required|exists:categories,id',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $announcement = new Announcement();
+        $announcement->title = $request->title;
+        $announcement->price = $request->price;
+        $announcement->description = $request->description;
+        $announcement->user_id = $request->user;
+        $announcement->category_id = $request->category;
+        $announcement->save();
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('images'), $imageName);
+
+                $announcementImage = new AnnouncementImage();
+                $announcementImage->announcement_id = $announcement->id;
+                $announcementImage->image_path = $imageName;
+                $announcementImage->save();
+            }
+        }
+
+        return redirect()->route('admin.announcements')->with('success', 'Announcement created successfully.');
+    }
+    public function delete_announcement($id)
+    {
+        $announcement = Announcement::find($id);
+        if ($announcement) {
+            foreach ($announcement->images as $image) {
+                $imagePath = public_path('images/' . $image->image_path);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+                $image->delete();
+            }
+            $announcement->delete();
+
+            return redirect()->route('admin.announcements')->with('success', 'Announcement deleted successfully.');
+        } else {
+            return redirect()->route('admin.announcements')->with('error', 'Error     ');
+        }
+    }
+    public function deleteImage($id)
+    {
+        $image = AnnouncementImage::findOrFail($id);
+        $imagePath = public_path('images/' . $image->image_path);
+
+        if (file_exists($imagePath)) {
+            unlink($imagePath);
+        }
+        $image->delete();
+
+        return redirect()->back()->with('success', 'Image deleted successfully.');
+    }
+    public function addImages(Request $request, $id)
+    {
+        $validator = Validator::make($request->all(), [
+            'images.*' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $announcement = Announcement::findOrFail($id);
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('images'), $imageName);
+
+                $announcementImage = new AnnouncementImage();
+                $announcementImage->announcement_id = $announcement->id;
+                $announcementImage->image_path = $imageName;
+                $announcementImage->save();
+            }
+        }
+
+        return redirect()->back()->with('success', 'Images added successfully.');
     }
 }

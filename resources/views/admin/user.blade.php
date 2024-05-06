@@ -38,7 +38,6 @@
                                 <span
                                     class="@if ($role->name == 'Admin' || $role->name == 'SuperAdmin') text-red-600 @else text-gray-800 @endif  bg-gray-200  text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">{{ $role->name }}</span>
                             @endforeach
-
                         </td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if (Auth::user()->hasRole('SuperAdmin'))

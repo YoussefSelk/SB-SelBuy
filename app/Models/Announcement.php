@@ -8,9 +8,25 @@ use Illuminate\Database\Eloquent\Model;
 class Announcement extends Model
 {
     use HasFactory;
+
+    protected $fillable = [
+        'user_id',
+        'category_id',
+        'title',
+        'description',
+        'price',
+        'is_active',
+        'expires_at',
+        'views',
+        'likes',
+    ];
+    
+    /**
+     * Get the user that owns the announcement.
+     */
     public function user()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -19,5 +35,13 @@ class Announcement extends Model
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    /**
+     * Get the images for the announcement.
+     */
+    public function images()
+    {
+        return $this->hasMany(AnnouncementImage::class);
     }
 }

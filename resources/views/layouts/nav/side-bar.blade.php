@@ -13,7 +13,7 @@
                         </path>
                     </svg>
                 </button>
-                <a href="https://flowbite.com" class="flex ms-2 md:me-24  ">
+                <a href="" class="flex ms-2 md:me-24  ">
                     <x-application-logo class="block h-9 w-auto mr-2" />
                     <span
                         class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white">Avito</span>

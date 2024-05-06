@@ -18,7 +18,6 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->decimal('price', 10, 2); // Maximum of 9999999.99
-            $table->string('image')->nullable();
             $table->boolean('is_active')->default(true); // To indicate if the announcement is active or not
             $table->dateTime('expires_at')->nullable(); // To set an expiration date for the announcement
             $table->integer('views')->default(0); // To count the number of views
