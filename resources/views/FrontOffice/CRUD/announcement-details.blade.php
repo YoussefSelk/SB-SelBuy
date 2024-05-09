@@ -38,10 +38,40 @@
 
         <!-- Content Container -->
         <div class="p-8">
-            <form id="editAnnouncementForm" action="{{ route('user.announcement.update', $announcement) }}" method="POST"
-                enctype="multipart/form-data">
-                @csrf
-                @method('PUT')
+            @if (Auth::check() && Auth::user()->id == $announcement->user_id)
+                <form id="announcementForm" action="{{ route('announcement.update', $announcement->id) }}" method="POST">
+                    @csrf
+                    @method('PUT')
+                    <!-- Title -->
+                    <div class="mb-4">
+                        <label for="announcementTitle" class="font-bold text-gray-600">Title:</label>
+                        <input type="text" name="title" id="announcementTitle" value="{{ $announcement->title }}"
+                            class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+
+                    <!-- Description -->
+                    <div class="mb-4">
+                        <label for="announcementDescription" class="font-bold text-gray-600">Description:</label>
+                        <textarea name="description" id="announcementDescription" rows="5"
+                            class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">{{ $announcement->description }}</textarea>
+                    </div>
+
+                    <!-- Price -->
+                    <div class="mb-4">
+                        <label for="announcementPrice" class="font-bold text-gray-600">Price:</label>
+                        <input type="number" name="price" id="announcementPrice" value="{{ $announcement->price }}"
+                            class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
+
+                    <!-- Submit Button -->
+                    <div class="mb-4">
+                        <button type="submit"
+                            class="px-4 py-2 bg-indigo-500 text-white rounded hover:bg-indigo-600 focus:outline-none focus:bg-indigo-600">Update
+                            Announcement</button>
+                    </div>
+                </form>
+            @else
+                <!-- Announcement Info -->
                 <div class="flex items-center mb-4">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
@@ -67,104 +97,67 @@
                 </div>
                 <div class="border-t-2 border-gray-200 mt-4 mb-4"></div>
 
+                <!-- Category Name -->
                 <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-4">
-                    <label for="" class="font-bold text-gray-600">Category Name:</label>
+                    <label for="category" class="font-bold text-gray-600">Category Name:</label>
                     <p class="text-black">{{ $announcement->category->name }}</p>
                 </div>
                 <div class="border-t-2 border-gray-200 mt-4 mb-4"></div>
 
+                <!-- Announcement Title -->
                 <div class="mb-4">
-                    <label for="" class="font-bold text-gray-600">Title:</label>
-                    <input type="text" id="title" name="title" value="{{ old('title', $announcement->title) }}"
-                        class="block w-full mt-1 text-lg leading-tight font-medium text-black">
+                    <label for="announcementTitle" class="font-bold text-gray-600">Title:</label>
+                    <p class="block mt-1 text-lg leading-tight font-medium text-black">{{ $announcement->title }}</p>
                 </div>
 
                 <div class="border-t-2 border-gray-200 mt-4 mb-4"></div>
 
+                <!-- Announcement Description -->
                 <div class="mt-4 text-gray-600 description">
-                    <label for="" class="font-bold text-gray-600">Description:</label>
-                    <textarea id="description" name="description" class="block w-full mt-1 text-lg leading-tight font-medium text-black">{{ old('description', $announcement->description) }}</textarea>
+                    <label for="announcementDescription" class="font-bold text-gray-600">Description:</label>
+
+                    @if (strlen($announcement->description) > 200)
+                        {{ substr($announcement->description, 0, 200) }}<span class="ellipsis">...</span><a href="#"
+                            class="text-indigo-600 hover:underline">Read more</a>
+                    @else
+                        <p>{{ $announcement->description }}</p>
+                    @endif
+
                 </div>
+            @endif
 
-                <div class="border-t-2 border-gray-200 mt-4 mb-4"></div>
+            <!-- Disclaimer -->
+            <div class="mt-8 text-sm text-gray-600">
+                <p><strong> <span><i class="fa-solid fa-triangle-exclamation"></i></span>
+                        Disclaimer:</strong> This website is not responsible for the products or services announced .
+                    Users are advised to exercise caution and conduct their own due diligence before
+                    engaging in any transaction.</p>
+            </div>
 
-                @if (auth()->id() === $announcement->user_id)
-                    <div class="mb-4">
-                        <label for="" class="font-bold text-gray-600">Photos:</label>
-                        <input type="file" id="photos" name="photos[]"
-                            class="block w-full mt-1 text-lg leading-tight font-medium text-black" multiple>
-                    </div>
-                @endif
-
-                <!-- Disclaimer -->
-                <div class="mt-8 text-sm text-gray-600">
-                    <p><strong> <span><i class="fa-solid fa-triangle-exclamation"></i></span>
-                            Disclaimer:</strong> This website is not responsible for the products or services announced .
-                        Users are advised to exercise caution and conduct their own due diligence before
-                        engaging in any transaction.</p>
-                </div>
-                @if (auth()->id() === $announcement->user_id)
-                    <div class="mt-4">
-                        <button id="updateAnnouncement"
-                            class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
-                            type="button">
-                            Submit Changes
-                        </button>
-                    </div>
-                @endif
-            </form>
         </div>
     </div>
-@endsection
 
-@section('styles')
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
-        integrity="sha512-NI5ZhDxwJy09bViZj9w4RX5F0x4nUsZS6Uv2lZ5sDvwq9+g4xDGwXab2bKmtgkJy12DwYpLnhgxU0Y1KIC8vcw=="
-        crossorigin="anonymous" referrerpolicy="no-referrer" />
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-@endsection
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
 
-@section('scripts')
     <script>
-        // JavaScript and jQuery for the carousel functionality
         $(document).ready(function() {
-            // Functionality to navigate the carousel
-            $('.carousel-bullet').click(function() {
-                var slideIndex = $(this).parent().index();
-                var slideId = '#carousel-' + (slideIndex + 1);
-                $(slideId).prop('checked', true);
-            });
+            $('#announcementForm').submit(function(e) {
+                e.preventDefault();
 
-            // Functionality to auto-advance slides
-            var autoAdvance = function() {
-                var nextSlide = $('input.carousel-open:checked').next('input.carousel-open');
-                if (nextSlide.length) {
-                    nextSlide.prop('checked', true);
-                } else {
-                    $('#carousel-1').prop('checked', true);
-                }
-            };
-            setInterval(autoAdvance, 5000);
-
-            // Handle changes made by the user
-            $('#updateAnnouncement').on('click', function() {
-                var formData = new FormData($('#editAnnouncementForm')[0]);
-                formData.append('_method', 'PUT');
                 $.ajax({
-                    url: $('#editAnnouncementForm').attr('action'),
-                    method: 'POST',
-                    data: formData,
-                    processData: false,
-                    contentType: false,
-                    success: function(response) {
-                        console.log(response);
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: $(this).serialize(),
+                    dataType: 'json',
+                    success: function(data) {
                         // Handle success response
-                        alert('Changes Submitted Successfully!');
+                        toastr.success(data.message, 'Success');
                     },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
+                    error: function(data) {
                         // Handle error response
-                        alert('Error occurred while submitting changes!');
+                        toastr.error('An error occurred while updating the announcement.');
                     }
                 });
             });

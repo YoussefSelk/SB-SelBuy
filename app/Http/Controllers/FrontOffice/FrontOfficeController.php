@@ -52,37 +52,16 @@ class FrontOfficeController extends Controller
 
     public function update_announcement(Request $request, Announcement $announcement)
     {
-        // Validate the request data if needed
-        $request->validate([
+        // Validate the form data
+        $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'description' => 'required|string',
-            'photos.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048' // Adjust the validation rules according to your needs
+            'price' => 'required|numeric',
         ]);
-
-        // Check if the authenticated user is the owner of the announcement
-        if ($request->user()->id !== $announcement->user_id) {
-            return redirect()->back()->with('error', 'Unauthorized');
-        }
 
         // Update the announcement
-        $announcement->update([
-            'title' => $request->title,
-            'description' => $request->description,
-        ]);
+        $announcement->update($validatedData);
 
-        // Handle photo upload if present
-        if ($request->hasFile('photos')) {
-            foreach ($request->file('photos') as $photo) {
-                $imageName = time() . '_' . $photo->getClientOriginalName();
-                $photo->move(public_path('images'), $imageName);
-
-                $announcementImage = new AnnouncementImage();
-                $announcementImage->announcement_id = $announcement->id;
-                $announcementImage->image_path = $imageName;
-                $announcementImage->save();
-            }
-        }
-
-        return redirect()->back()->with('success', 'Announcement updated successfully');
+        return response()->json(['message' => 'Announcement updated successfully']);
     }
 }
