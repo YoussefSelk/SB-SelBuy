@@ -39,7 +39,10 @@ class CategorySeeder extends Seeder
             ['name' => 'Video Games'],
             ['name' => 'Travel'],
             ['name' => 'Collectibles & Memorabilia'],
-            // Add more categories as needed
+            ['name' => 'Apartments'],
+            ['name' => 'Cars'],
+            ['name' => 'Mobile Phones'],
+            ['name' => 'Houses & Villas'],
         ];
 
 

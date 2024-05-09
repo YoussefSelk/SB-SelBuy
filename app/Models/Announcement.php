@@ -20,7 +20,7 @@ class Announcement extends Model
         'views',
         'likes',
     ];
-    
+
     /**
      * Get the user that owns the announcement.
      */
@@ -34,7 +34,7 @@ class Announcement extends Model
      */
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     /**

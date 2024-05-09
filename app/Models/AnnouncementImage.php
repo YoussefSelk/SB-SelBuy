@@ -15,6 +15,6 @@ class AnnouncementImage extends Model
 
     public function announcement()
     {
-        return $this->belongsTo(Announcement::class);
+        return $this->belongsTo(Announcement::class, 'announcement_id');
     }
 }

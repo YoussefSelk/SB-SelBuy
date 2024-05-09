@@ -17,8 +17,10 @@
                     @if (count($announcement->images) > 0)
                         @foreach ($announcement->images as $key => $image)
                             <div class="m-2 announcement-image @if ($key >= 2) hidden @endif">
-                                <img class="w-40 h-40 object-cover rounded-lg"
-                                    src="{{ asset('images/' . $image->image_path) }}" alt="Announcement Image">
+                                <a data-fancybox="gallery" href="{{ asset('images/' . $image->image_path) }}">
+                                    <img class="w-40 h-40 object-cover rounded-lg"
+                                        src="{{ asset('images/' . $image->image_path) }}" alt="Announcement Image">
+                                </a>
                                 <span class=" flex flex-row items-center justify-center mt-2">
                                     <p class="text-sm mr-4 text-gray-500 ">Image {{ $key + 1 }}</p>
                                     <a href="{{ route('admin.delete.image.annoucement', $image->id) }}"
@@ -67,6 +69,10 @@
 </x-app-layout>
 
 @include('modals.add-image-announecement-modal')
+
+<!-- Include Fancybox CSS and JavaScript files -->
+<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
 
 <script>
     $(document).ready(function() {

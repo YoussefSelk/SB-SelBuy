@@ -85,14 +85,14 @@
         </svg>
     </button>
 </div>
-
-<!-- Button to open upload images modal -->
-<button id="uploadImagesButton"
-    class="block bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg text-lg px-5 py-2.5 text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
-    <i class="fa fa-solid fa-image"></i>
-    Add Images
-</button>
-
+@if (Auth::check() && Auth::user()->id == $announcement->user->id)
+    <!-- Button to open upload images modal -->
+    <button id="uploadImagesButton"
+        class="block bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg text-lg px-5 py-2.5 text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+        <i class="fa fa-solid fa-image"></i>
+        Add Images
+    </button>
+@endif
 <script>
     $(document).ready(function() {
 
