@@ -9,6 +9,7 @@ include 'web/FrontOffce/index.php';
 
 include 'web/FrontOffce/announcement.php';
 
+include 'web/FrontOffce/category.php';
 
 //The Admin Dashboard Routes (BackOffice)
 include 'web/BackOffice/dashboard.php';

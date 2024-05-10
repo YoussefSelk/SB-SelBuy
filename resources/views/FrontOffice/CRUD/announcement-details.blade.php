@@ -3,6 +3,13 @@
 @section('title', 'Home')
 
 @section('content')
+
+    <div class="max-w-md mx-auto p-6 bg-white rounded-md shadow-md mb-8">
+        @php
+            $items = [['label' => 'Home', 'url' => route('home')], ['label' => 'Announcement Details', 'url' => '#']];
+        @endphp
+        <x-my-components.breadcrumb :items="$items"></x-breadcrumbs>
+    </div>
     <div class="max-w-md mx-auto bg-white rounded-xl shadow-md overflow-hidden md:max-w-2xl">
         <!-- Carousel wrapper -->
         <div id="controls-carousel" class="relative w-full" data-carousel="static">
@@ -12,8 +19,15 @@
                     <div class="hidden duration-700 ease-in-out" data-carousel-item>
                         <img src="{{ asset('images/' . $image->image_path) }}"
                             class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
+                        @if (Auth::check() && Auth::user()->id == $announcement->user_id)
+                            <a href="#"
+                                class="deleteImage absolute top-3 left-3 p-2 bg-slate-500 rounded-full cursor-pointer "data-image-id="{{ $image->id }}">
+                                <i class="fa fa-solid fa-trash text-red-500"></i>
+                            </a>
+                        @endif
                     </div>
                 @endforeach
+
             </div>
             <!-- Slider controls -->
             <button type="button"
@@ -39,7 +53,8 @@
         <!-- Content Container -->
         <div class="p-8">
             @if (Auth::check() && Auth::user()->id == $announcement->user_id)
-                <form id="announcementForm" action="{{ route('announcement.update', $announcement->id) }}" method="POST">
+                <form id="announcementForm" action="{{ route('announcement.update', $announcement->id) }}" method="POST"
+                    enctype="multipart/form-data">
                     @csrf
                     @method('PUT')
                     <!-- Title -->
@@ -62,6 +77,68 @@
                         <input type="number" name="price" id="announcementPrice" value="{{ $announcement->price }}"
                             class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
                     </div>
+                    <!-- City -->
+                    <!-- City -->
+                    <div class="mb-4">
+                        <label for="announcementCity" class="font-bold text-gray-600">City:</label>
+                        <select name="city" id="announcementCity"
+                            class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                            <option disabled>Choose a city</option>
+                            <option value="Agadir" @if ($announcement->ville == 'Agadir') selected @endif>Agadir</option>
+                            <option value="Al Hoceima" @if ($announcement->city == 'Al Hoceima') selected @endif>Al Hoceima</option>
+                            <option value="Azemmour" @if ($announcement->ville == 'Azemmour') selected @endif>Azemmour</option>
+                            <option value="Beni Mellal" @if ($announcement->city == 'Beni Mellal') selected @endif>Beni Mellal
+                            </option>
+                            <option value="Benslimane" @if ($announcement->ville == 'Benslimane') selected @endif>Benslimane</option>
+                            <option value="Bouznika" @if ($announcement->city == 'Bouznika') selected @endif>Bouznika</option>
+                            <option value="Casablanca" @if ($announcement->city == 'Casablanca') selected @endif>Casablanca</option>
+                            <option value="Chefchaouen" @if ($announcement->city == 'Chefchaouen') selected @endif>Chefchaouen
+                            </option>
+                            <option value="Dakhla" @if ($announcement->ville == 'Dakhla') selected @endif>Dakhla</option>
+                            <option value="El Jadida" @if ($announcement->ville == 'El Jadida') selected @endif>El Jadida</option>
+                            <option value="Erfoud" @if ($announcement->ville == 'Erfoud') selected @endif>Erfoud</option>
+                            <option value="Essaouira" @if ($announcement->ville == 'Essaouira') selected @endif>Essaouira</option>
+                            <option value="Fes" @if ($announcement->ville == 'Fes') selected @endif>Fes</option>
+                            <option value="Fnideq" @if ($announcement->ville == 'Fnideq') selected @endif>Fnideq</option>
+                            <option value="Guelmim" @if ($announcement->ville == 'Guelmim') selected @endif>Guelmim</option>
+                            <option value="Ifrane" @if ($announcement->ville == 'Ifrane') selected @endif>Ifrane</option>
+                            <option value="Kenitra" @if ($announcement->ville == 'Kenitra') selected @endif>Kenitra</option>
+                            <option value="Khemisset" @if ($announcement->ville == 'Khemisset') selected @endif>Khemisset</option>
+                            <option value="Khenifra" @if ($announcement->ville == 'Khenifra') selected @endif>Khenifra</option>
+                            <option value="Khouribga" @if ($announcement->ville == 'Khouribga') selected @endif>Khouribga</option>
+                            <option value="Ksar El Kebir" @if ($announcement->ville == 'Ksar El Kebir') selected @endif>Ksar El Kebir
+                            </option>
+                            <option value="Laayoune" @if ($announcement->ville == 'Laayoune') selected @endif>Laayoune</option>
+                            <option value="Larache" @if ($announcement->ville == 'Larache') selected @endif>Larache</option>
+                            <option value="Marrakech" @if ($announcement->ville == 'Marrakech') selected @endif>Marrakech</option>
+                            <option value="Martil" @if ($announcement->ville == 'Martil') selected @endif>Martil</option>
+                            <option value="Meknes" @if ($announcement->ville == 'Meknes') selected @endif>Meknes</option>
+                            <option value="Mohammedia" @if ($announcement->ville == 'Mohammedia') selected @endif>Mohammedia
+                            </option>
+                            <option value="Nador" @if ($announcement->ville == 'Nador') selected @endif>Nador</option>
+                            <option value="Oualidia" @if ($announcement->ville == 'Oualidia') selected @endif>Oualidia</option>
+                            <option value="Ouarzazate" @if ($announcement->ville == 'Ouarzazate') selected @endif>Ouarzazate
+                            </option>
+                            <option value="Oujda" @if ($announcement->ville == 'Oujda') selected @endif>Oujda</option>
+                            <option value="Rabat" @if ($announcement->ville == 'Rabat') selected @endif>Rabat</option>
+                            <option value="Safi" @if ($announcement->ville == 'Safi') selected @endif>Safi</option>
+                            <option value="Saidia" @if ($announcement->ville == 'Saidia') selected @endif>Saidia</option>
+                            <option value="Salé" @if ($announcement->ville == 'Salé') selected @endif>Salé</option>
+                            <option value="Sefrou" @if ($announcement->ville == 'Sefrou') selected @endif>Sefrou</option>
+                            <option value="Tangier" @if ($announcement->ville == 'Tangier') selected @endif>Tangier</option>
+                            <option value="Taza" @if ($announcement->ville == 'Taza') selected @endif>Taza</option>
+                            <option value="Temara" @if ($announcement->ville == 'Temara') selected @endif>Temara</option>
+                            <option value="Tetouan" @if ($announcement->ville == 'Tetouan') selected @endif>Tetouan</option>
+                            <option value="Tiznit" @if ($announcement->ville == 'Tiznit') selected @endif>Tiznit</option>
+                        </select>
+                    </div>
+
+                    <!-- Image -->
+                    <div class="mb-4">
+                        <label for="announcementImages" class="font-bold text-gray-600">Images:</label>
+                        <input type="file" name="images[]" id="announcementImages" multiple
+                            class="block mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50">
+                    </div>
 
                     <!-- Submit Button -->
                     <div class="mb-4">
@@ -72,7 +149,7 @@
                 </form>
             @else
                 <!-- Announcement Info -->
-                <div class="flex items-center mb-4">
+                <div class="flex items-center mb-4 bg-white shadow rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
                             @if ($announcement->user->avatar)
@@ -98,27 +175,42 @@
                 <div class="border-t-2 border-gray-200 mt-4 mb-4"></div>
 
                 <!-- Category Name -->
-                <div class="uppercase tracking-wide text-sm text-indigo-500 font-semibold mb-4">
-                    <label for="category" class="font-bold text-gray-600">Category Name:</label>
-                    <p class="text-black">{{ $announcement->category->name }}</p>
+                <div class="flex flex-row justify-between items-center bg-white shadow rounded-lg p-4">
+                    <div class="flex flex-col">
+                        <span class="text-xs font-semibold text-gray-500 uppercase">Category Name</span>
+                        <p class="text-lg text-gray-800 font-bold mt-1">{{ $announcement->category->name }}</p>
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="text-xs font-semibold text-gray-500 uppercase">City</span>
+                        <p class="text-lg text-gray-800 font-bold mt-1">{{ $announcement->ville }}</p>
+                    </div>
                 </div>
+
                 <div class="border-t-2 border-gray-200 mt-4 mb-4"></div>
 
                 <!-- Announcement Title -->
-                <div class="mb-4">
-                    <label for="announcementTitle" class="font-bold text-gray-600">Title:</label>
-                    <p class="block mt-1 text-lg leading-tight font-medium text-black">{{ $announcement->title }}</p>
+                <div class="flex flex-row justify-between items-center bg-white shadow rounded-lg p-4">
+                    <div class="mb-4">
+                        <label for="announcementTitle" class="font-bold text-gray-600">Title:</label>
+                        <p class="block mt-1 text-lg leading-tight font-medium text-black">{{ $announcement->title }}</p>
+                    </div>
+                    <div class="mb-4">
+                        <label for="announcementTitle" class="font-bold text-gray-600">Price :</label>
+                        <p class="block mt-1 text-lg leading-tight font-medium text-black">{{ $announcement->price }} MAD
+                        </p>
+                    </div>
                 </div>
+
 
                 <div class="border-t-2 border-gray-200 mt-4 mb-4"></div>
 
                 <!-- Announcement Description -->
-                <div class="mt-4 text-gray-600 description">
+                <div class="mt-4 text-gray-600 description bg-white shadow rounded-lg p-4">
                     <label for="announcementDescription" class="font-bold text-gray-600">Description:</label>
 
                     @if (strlen($announcement->description) > 200)
-                        {{ substr($announcement->description, 0, 200) }}<span class="ellipsis">...</span><a href="#"
-                            class="text-indigo-600 hover:underline">Read more</a>
+                        {{ substr($announcement->description, 0, 200) }}<span class="ellipsis">...</span><a
+                            href="#" class="text-indigo-600 hover:underline">Read more</a>
                     @else
                         <p>{{ $announcement->description }}</p>
                     @endif
@@ -127,7 +219,7 @@
             @endif
 
             <!-- Disclaimer -->
-            <div class="mt-8 text-sm text-gray-600">
+            <div class="mt-8 text-sm text-gray-600 bg-slate-200 shadow rounded-lg p-4">
                 <p><strong> <span><i class="fa-solid fa-triangle-exclamation"></i></span>
                         Disclaimer:</strong> This website is not responsible for the products or services announced .
                     Users are advised to exercise caution and conduct their own due diligence before
@@ -149,7 +241,9 @@
                 $.ajax({
                     type: 'POST',
                     url: $(this).attr('action'),
-                    data: $(this).serialize(),
+                    data: new FormData(this),
+                    processData: false,
+                    contentType: false,
                     dataType: 'json',
                     success: function(data) {
                         // Handle success response
@@ -163,4 +257,33 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function() {
+            $('.deleteImage').click(function(e) {
+                e.preventDefault();
+                var imageId = $(this).data('image-id');
+                var url = "{{ route('announcement.deleteImage', ':id') }}";
+                url = url.replace(':id', imageId);
+
+                $.ajax({
+                    type: 'DELETE',
+                    url: url,
+                    data: {
+                        "_token": "{{ csrf_token() }}"
+                    },
+                    dataType: 'json',
+                    success: function(data) {
+                        toastr.success(data.message, 'Success');
+                        location.reload();
+                    },
+                    error: function(data) {
+                        toastr.error('An error occurred while deleting the image.');
+                    }
+                });
+            });
+        });
+    </script>
+
+
+
 @endsection

@@ -41,7 +41,6 @@ class CategorySeeder extends Seeder
             ['name' => 'Collectibles & Memorabilia'],
             ['name' => 'Apartments'],
             ['name' => 'Cars'],
-            ['name' => 'Mobile Phones'],
             ['name' => 'Houses & Villas'],
         ];
 

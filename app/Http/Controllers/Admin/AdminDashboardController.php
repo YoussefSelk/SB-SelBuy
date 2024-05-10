@@ -235,6 +235,7 @@ class AdminDashboardController extends Controller
             'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'user' => 'required|exists:users,id',
             'category' => 'required|exists:categories,id',
+            'city' => 'required|string',
         ]);
 
         if ($validator->fails()) {
@@ -250,6 +251,7 @@ class AdminDashboardController extends Controller
         $announcement->description = $request->description;
         $announcement->user_id = $request->user;
         $announcement->category_id = $request->category;
+        $announcement->ville = $request->city; // Add city to the announcement
         $announcement->save();
 
         if ($request->hasFile('images')) {
@@ -266,6 +268,7 @@ class AdminDashboardController extends Controller
 
         return redirect()->route('admin.announcements')->with('success', 'Announcement created successfully.');
     }
+
     public function delete_announcement($id)
     {
         $announcement = Announcement::find($id);

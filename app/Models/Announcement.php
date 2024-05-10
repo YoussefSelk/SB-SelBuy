@@ -19,6 +19,7 @@ class Announcement extends Model
         'expires_at',
         'views',
         'likes',
+        'ville',
     ];
 
     /**

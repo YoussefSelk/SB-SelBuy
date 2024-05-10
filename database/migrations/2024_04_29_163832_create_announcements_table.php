@@ -16,6 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('category_id')->nullable();
             $table->string('title');
+            $table->string('ville')->nullable();
             $table->text('description');
             $table->decimal('price', 10, 2); // Maximum of 9999999.99
             $table->boolean('is_active')->default(true); // To indicate if the announcement is active or not

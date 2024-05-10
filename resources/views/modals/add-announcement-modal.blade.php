@@ -82,6 +82,55 @@
                         </div>
                     </div>
                 </div>
+                <div class="mb-4">
+                    <label for="city" class="block text-sm font-medium text-gray-900">Select a City</label>
+                    <select id="city" name="city"
+                        class="block w-full mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                        <option selected disabled>Choose a city</option>
+                        <option value="Agadir">Agadir</option>
+                        <option value="Al Hoceima">Al Hoceima</option>
+                        <option value="Azemmour">Azemmour</option>
+                        <option value="Beni Mellal">Beni Mellal</option>
+                        <option value="Benslimane">Benslimane</option>
+                        <option value="Bouznika">Bouznika</option>
+                        <option value="Casablanca">Casablanca</option>
+                        <option value="Chefchaouen">Chefchaouen</option>
+                        <option value="Dakhla">Dakhla</option>
+                        <option value="El Jadida">El Jadida</option>
+                        <option value="Erfoud">Erfoud</option>
+                        <option value="Essaouira">Essaouira</option>
+                        <option value="Fes">Fes</option>
+                        <option value="Fnideq">Fnideq</option>
+                        <option value="Guelmim">Guelmim</option>
+                        <option value="Ifrane">Ifrane</option>
+                        <option value="Kenitra">Kenitra</option>
+                        <option value="Khemisset">Khemisset</option>
+                        <option value="Khenifra">Khenifra</option>
+                        <option value="Khouribga">Khouribga</option>
+                        <option value="Ksar El Kebir">Ksar El Kebir</option>
+                        <option value="Laayoune">Laayoune</option>
+                        <option value="Larache">Larache</option>
+                        <option value="Marrakech">Marrakech</option>
+                        <option value="Martil">Martil</option>
+                        <option value="Meknes">Meknes</option>
+                        <option value="Mohammedia">Mohammedia</option>
+                        <option value="Nador">Nador</option>
+                        <option value="Oualidia">Oualidia</option>
+                        <option value="Ouarzazate">Ouarzazate</option>
+                        <option value="Oujda">Oujda</option>
+                        <option value="Rabat">Rabat</option>
+                        <option value="Safi">Safi</option>
+                        <option value="Saidia">Saidia</option>
+                        <option value="Salé">Salé</option>
+                        <option value="Sefrou">Sefrou</option>
+                        <option value="Tangier">Tangier</option>
+                        <option value="Taza">Taza</option>
+                        <option value="Temara">Temara</option>
+                        <option value="Tetouan">Tetouan</option>
+                        <option value="Tiznit">Tiznit</option>
+                    </select>
+                    <x-input-error :messages="$errors->get('city')" class="mt-2" />
+                </div>
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="mb-4">
@@ -97,7 +146,8 @@
                     </div>
 
                     <div class="mb-4">
-                        <label for="category" class="block text-sm font-medium text-gray-900">Select a Category</label>
+                        <label for="category" class="block text-sm font-medium text-gray-900">Select a
+                            Category</label>
                         <select id="category" name="category"
                             class="block w-full mt-1 bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500">
                             <option selected disabled>Choose a category</option>
