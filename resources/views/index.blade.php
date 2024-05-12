@@ -19,6 +19,7 @@
                         <div
                             class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
                             <div class="flex items-center p-4 border-b border-gray-100">
+
                                 <div class="mr-4">
                                     @if ($product->user->avatar)
                                         <img src="{{ asset('storage/profile_pictures/' . $product->user->avatar) }}"

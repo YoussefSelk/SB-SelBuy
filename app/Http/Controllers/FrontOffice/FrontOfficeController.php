@@ -6,7 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\AnnouncementImage;
 use App\Models\Category;
+use App\Models\Role;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class FrontOfficeController extends Controller
 {
@@ -62,8 +66,35 @@ class FrontOfficeController extends Controller
         return view('FrontOffice.CRUD.category-announcements', compact('category', 'announcements'));
     }
 
+    public function become_seller_view($id)
+    {
+        if (Auth::user()->id != $id) {
+            return redirect()->back()->with('error', 'Security Guard Error');
+        }
+        $user = User::find($id);
+        return view('FrontOffice.CRUD.become-seller')->with(compact('user'));
+    }
 
+    public function create_announcement_view()
+    {
+        $categories = Category::all();
+        return view('FrontOffice.CRUD.create-announcement')->with(compact('categories'));
+    }
+    public function my_announcement_view($id)
+    {
+        $user = User::findOrFail($id);
+        $announcements = Announcement::where('user_id', $id)->get();
 
+        return view('FrontOffice.seller.my-announcements')->with(compact('user', 'announcements'));
+    }
+    public function terms_and_conditions()
+    {
+        return view('FrontOffice.terms_and_conditions');
+    }
+    public function privacy_policy()
+    {
+        return view('FrontOffice.privacy_policy');
+    }
     /////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// CRUD  /////////////////////////////////
     /////////////////////////////////////////////////////////////////////////
@@ -150,5 +181,81 @@ class FrontOfficeController extends Controller
         $announcements = $announcements->paginate(10);
 
         return response()->json(['announcements' => $announcements]);
+    }
+    public function become_seller(Request $request, $id)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255',
+            'phone' => 'required|string|max:20',
+            'ville' => 'required|string|max:255',
+            'privacy_policy' => 'accepted',
+            'terms_conditions' => 'accepted',
+        ]);
+
+        $user = User::findOrFail($id);
+        if ($user->name != $request->input('name')) {
+            $user->name = $request->input('name');
+        }
+
+        if ($user->email != $request->input('email')) {
+            $user->email = $request->input('email');
+        }
+
+        if ($user->phone != $request->input('phone')) {
+            $user->phone = $request->input('phone');
+        }
+
+        if ($user->ville != $request->input('ville')) {
+            $user->ville = $request->input('ville');
+        }
+
+        $Role = Role::where('name', 'Seller')->first();
+        $user->roles()->attach($Role);
+        $user->save();
+
+        return redirect()->route('home')->with('success', 'You are now a Seller !!!');
+    }
+    public function create_announcement(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'title' => 'required|string|max:255',
+            'price' => 'required|numeric',
+            'description' => 'required|string',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'user' => 'required|exists:users,id',
+            'category' => 'required|exists:categories,id',
+            'city' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return redirect()
+                ->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
+        $announcement = new Announcement();
+        $announcement->title = $request->title;
+        $announcement->price = $request->price;
+        $announcement->description = $request->description;
+        $announcement->user_id = $request->user;
+        $announcement->category_id = $request->category;
+        $announcement->ville = $request->city; // Add city to the announcement
+        $announcement->save();
+
+        if ($request->hasFile('images')) {
+            foreach ($request->file('images') as $image) {
+                $imageName = time() . '_' . $image->getClientOriginalName();
+                $image->move(public_path('images'), $imageName);
+
+                $announcementImage = new AnnouncementImage();
+                $announcementImage->announcement_id = $announcement->id;
+                $announcementImage->image_path = $imageName;
+                $announcementImage->save();
+            }
+        }
+
+        return redirect()->route('home')->with('success', 'Announcement created successfully.');
     }
 }

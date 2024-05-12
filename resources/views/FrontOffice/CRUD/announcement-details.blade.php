@@ -90,9 +90,9 @@
                             <option value="Beni Mellal" @if ($announcement->city == 'Beni Mellal') selected @endif>Beni Mellal
                             </option>
                             <option value="Benslimane" @if ($announcement->ville == 'Benslimane') selected @endif>Benslimane</option>
-                            <option value="Bouznika" @if ($announcement->city == 'Bouznika') selected @endif>Bouznika</option>
-                            <option value="Casablanca" @if ($announcement->city == 'Casablanca') selected @endif>Casablanca</option>
-                            <option value="Chefchaouen" @if ($announcement->city == 'Chefchaouen') selected @endif>Chefchaouen
+                            <option value="Bouznika" @if ($announcement->ville == 'Bouznika') selected @endif>Bouznika</option>
+                            <option value="Casablanca" @if ($announcement->ville == 'Casablanca') selected @endif>Casablanca</option>
+                            <option value="Chefchaouen" @if ($announcement->ville == 'Chefchaouen') selected @endif>Chefchaouen
                             </option>
                             <option value="Dakhla" @if ($announcement->ville == 'Dakhla') selected @endif>Dakhla</option>
                             <option value="El Jadida" @if ($announcement->ville == 'El Jadida') selected @endif>El Jadida</option>
@@ -152,13 +152,15 @@
                 <div class="flex items-center mb-4 bg-white shadow rounded-lg p-4">
                     <div class="flex items-center">
                         <div class="flex-shrink-0">
-                            @if ($announcement->user->avatar)
-                                <img class="h-10 w-10 rounded-full"
-                                    src="{{ asset('images/' . $announcement->user->avatar) }}" alt="">
-                            @else
-                                <img class="h-10 w-10 rounded-full"
-                                    src="https://ui-avatars.com/api/?name={{ $announcement->user->name }}" alt="">
-                            @endif
+                            <div class="mr-4">
+                                @if ($announcement->user->avatar)
+                                    <img src="{{ asset('storage/profile_pictures/' . $announcement->user->avatar) }}"
+                                        alt="Profile Picture" class="w-12 h-12 rounded-full" alt="user photo">
+                                @else
+                                    <img src="https://ui-avatars.com/api/?name={{ $announcement->user->name }}"
+                                        alt="user photo" class="w-12 h-12 rounded-full">
+                                @endif
+                            </div>
                         </div>
                         <div class="ml-3">
                             <p class="text-sm font-medium text-gray-900">{{ $announcement->user->name }}</p>
