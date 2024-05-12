@@ -205,17 +205,23 @@
 
 
                 <div class="border-t-2 border-gray-200 mt-4 mb-4"></div>
+                <div class="flex flex-row justify-between items-center rounded-lg p-4">
+                    <!-- Announcement Description -->
+                    <div class="mt-4 text-gray-600 description bg-white shadow rounded-lg p-4">
+                        <label for="announcementDescription" class="font-bold text-gray-600">Description:</label>
 
-                <!-- Announcement Description -->
-                <div class="mt-4 text-gray-600 description bg-white shadow rounded-lg p-4">
-                    <label for="announcementDescription" class="font-bold text-gray-600">Description:</label>
-
-                    @if (strlen($announcement->description) > 200)
-                        {{ substr($announcement->description, 0, 200) }}<span class="ellipsis">...</span><a
-                            href="#" class="text-indigo-600 hover:underline">Read more</a>
-                    @else
-                        <p>{{ $announcement->description }}</p>
-                    @endif
+                        @if (strlen($announcement->description) > 200)
+                            {{ substr($announcement->description, 0, 200) }}<span class="ellipsis">...</span><a
+                                href="#" class="text-indigo-600 hover:underline">Read more</a>
+                        @else
+                            <p>{{ $announcement->description }}</p>
+                        @endif
+                    </div>
+                    <div>
+                        <a href="{{ route('chat.start', $announcement->user->id) }}">
+                            <i class="fa fa-regular fa-comments" style="color: #74C0FC;"></i>
+                        </a>
+                    </div>
 
                 </div>
             @endif

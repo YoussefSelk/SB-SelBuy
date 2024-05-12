@@ -16,6 +16,9 @@ include 'web/FrontOffce/category.php';
 //
 include 'web/FrontOffce/seller.php';
 
+
+include 'web/FrontOffce/chat.php';
+
 //The Admin Dashboard Routes (BackOffice)
 include 'web/BackOffice/dashboard.php';
 
