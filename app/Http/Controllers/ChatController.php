@@ -2,98 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\MessageSent;
-use Illuminate\Http\Request;
 use App\Models\Message;
-use App\Models\User;
+use App\Services\UserService;
+use Illuminate\Http\Request;
 
 class ChatController extends Controller
 {
-    public function index()
+    public function chatForm($user_id, UserService $userService)
     {
-        return view('chat.index');
+        $receiver = $userService->getUser($user_id);
+        return view('chat.index', compact('receiver'));
     }
-    public function latestMessages($toUserId)
+    public function sendMessage($user_id, Request $request, UserService $userService)
     {
-        $messages = Message::where('to_user_id', auth()->id())
-            ->where('from_user_id', $toUserId)
-            ->where('created_at', '>', now()->subSeconds(2))
+        $userService->sendMessage($user_id, $request->message);
+        return response()->json('Message Sent');
+    }
+    public function getChatHistory($receiverId)
+    {
+        $authId = auth()->id();
+
+        $messages = Message::where(function ($query) use ($authId, $receiverId) {
+            $query->where('sender', $authId)
+                ->where('receiver', $receiverId);
+        })->orWhere(function ($query) use ($authId, $receiverId) {
+            $query->where('sender', $receiverId)
+                ->where('receiver', $authId);
+        })->orderBy('created_at', 'asc')
             ->get();
 
-        return response()->json(['messages' => $messages]);
-    }
-    public function getConversations()
-    {
-        $userId = auth()->id();
+        // Mark messages as sent or received
+        $messages = $messages->map(function ($message) use ($authId) {
+            $message->sent_by_user = $message->sender == $authId;
+            return $message;
+        });
 
-        // Fetch conversations of the current user
-        $conversations = Message::where('to_user_id', $userId)
-            ->orWhere('from_user_id', $userId)
-            ->with('sender')
-            ->with('receiver')
-            ->select('to_user_id', 'from_user_id')
-            ->distinct()
-            ->get();
-
-        $participants = collect([]);
-
-        foreach ($conversations as $conversation) {
-            if ($conversation->from_user_id == $userId) {
-                $participants->push($conversation->to_user_id);
-            } else {
-                $participants->push($conversation->from_user_id);
-            }
-        }
-
-        // Fetch user details for each conversation
-        $users = User::whereIn('id', $participants)->get(['id', 'name']);
-
-        return response()->json($users);
-    }
-
-    public function getConversation($senderId)
-    {
-        $userId = auth()->id();
-
-        // Fetch messages between the current user and the specific sender
-        $messages = Message::where(function ($query) use ($userId, $senderId) {
-            $query->where('from_user_id', $userId)
-                ->where('to_user_id', $senderId);
-        })->orWhere(function ($query) use ($userId, $senderId) {
-            $query->where('from_user_id', $senderId)
-                ->where('to_user_id', $userId);
-        })->orderBy('created_at', 'asc')->get();
-
-        return response()->json(['messages' => $messages]);
-    }
-
-    public function sendMessage(Request $request)
-    {
-        $message = new Message();
-        $message->from_user_id = auth()->id();
-        $message->to_user_id = $request->to_user_id;
-        $message->message = $request->message;
-        $message->save();
-
-        // Broadcast event
-        broadcast(new MessageSent($message));
-
-        return response()->json(['status' => 'Message sent!', 'message' => $message]);
-    }
-
-    public function getMessageHistory($toUserId)
-    {
-        $userId = auth()->id();
-
-        // Fetch messages
-        $messages = Message::where(function ($query) use ($toUserId, $userId) {
-            $query->where('from_user_id', $userId)
-                ->where('to_user_id', $toUserId);
-        })->orWhere(function ($query) use ($toUserId, $userId) {
-            $query->where('from_user_id', $toUserId)
-                ->where('to_user_id', $userId);
-        })->orderBy('created_at', 'asc')->get();
-
-        return response()->json(['messages' => $messages]);
+        return response()->json($messages);
     }
 }

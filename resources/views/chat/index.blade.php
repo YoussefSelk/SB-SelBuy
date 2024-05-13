@@ -4,186 +4,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <style>
-        .message-bubble {
-            max-width: 70%;
-        }
+    <script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 
-        .message-sender {
-            background-color: #007bff;
-            color: white;
-            float: right;
-        }
-
-        .message-receiver {
-            background-color: #e9ecef;
-            color: black;
-            float: left;
-        }
-
-        .conversation-link {
-            cursor: pointer;
-        }
-    </style>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
-<body class="bg-gray-100">
-    <div id="app" class="max-w-xl mx-auto my-8">
-        <div class="flex">
-            <div class="w-1/4 bg-gray-200 px-4 py-6">
-                <h1 class="text-lg font-bold mb-4">Conversations</h1>
-                <ul id="conversations">
-                    <!-- Conversations will be loaded here -->
-                </ul>
-            </div>
-            <div class="w-3/4 px-4 py-6">
-                <div id="messages" class="border-b pb-4"></div>
-                <input type="hidden" id="to_user_id" value="">
-                <div class="flex mt-4">
-                    <input type="text" id="message"
-                        class="w-full rounded-l-lg py-2 px-4 border-t mr-0 border-b border-l text-gray-800 border-gray-200 bg-white">
-                    <button id="send"
-                        class="px-8 rounded-r-lg bg-blue-500  text-white font-bold p-2 uppercase border-blue-500 border-t border-b border-r">Send</button>
-                </div>
-            </div>
+<body>
+    <div class="flex flex-col h-screen">
+        <!-- Chat Header -->
+        <div class="bg-gray-800 text-white p-4 flex justify-between items-center">
+            <h1 class="text-lg font-semibold">Chat</h1>
+            <button
+                class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg focus:outline-none focus:ring focus:ring-blue-300">New
+                Chat</button>
+        </div>
+
+        <!-- Chat Messages -->
+        <div id="chat_area" class="flex-1 p-4 overflow-y-auto">
+            <!-- Messages will be appended here -->
+        </div>
+
+        <!-- Chat Input -->
+        <div class="bg-gray-100 p-4">
+            <input type="text" placeholder="Type your message..." id="message"
+                class="w-full border-gray-300 border-2 rounded-lg p-2 focus:outline-none focus:ring focus:ring-blue-300">
+            <button id="send">Send</button>
         </div>
     </div>
-
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <script>
-        // Function to fetch and display message history
-        function fetchMessageHistory(toUserId) {
-            $.ajax({
-                url: '/message/history/' + toUserId,
-                method: 'GET',
-                success: function(response) {
-                    // Empty the messages container
-                    $('#messages').empty();
-                    // Check if messages exist in the response
-                    if (response.messages && response.messages.length > 0) {
-                        // Loop through the messages and append them to the messages container
-                        response.messages.forEach(function(message) {
-                            var messageClass = (message.sender_id ==
-                                    '{{ auth()->id() }}') ?
-                                'message-sender' : 'message-receiver';
-                            $('#messages').append(
-                                '<div class="flex mb-2"><div class="message-bubble py-2 px-4 rounded-lg ' +
-                                messageClass + ' inline-block">' + message.message +
-                                '</div></div>');
-                        });
-                    } else {
-                        // Handle case when no messages are returned
-                        $('#messages').append('<p>No messages found</p>');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                    // Handle error display
-                    $('#messages').append('<p>Error loading messages</p>');
-                }
-            });
-        }
-
-        // Function to fetch new messages
-        function fetchNewMessages() {
-            var toUserId = $('#to_user_id').val();
-            $.ajax({
-                url: '/message/latest/' + toUserId,
-                method: 'GET',
-                success: function(response) {
-                    if (response.messages && response.messages.length > 0) {
-                        response.messages.forEach(function(message) {
-                            var messageClass = (message.sender_id ==
-                                    '{{ auth()->id() }}') ?
-                                'message-sender' : 'message-receiver';
-                            $('#messages').append(
-                                '<div class="flex mb-2"><div class="message-bubble py-2 px-4 rounded-lg ' +
-                                messageClass + ' inline-block">' + message.message +
-                                '</div></div>');
-                        });
-                    }
-                    setTimeout(fetchNewMessages, 2000); // Fetch new messages every 2 seconds
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                    setTimeout(fetchNewMessages, 2000); // Retry after 2 seconds if an error occurs
-                }
-            });
-        }
-
-        // Function to fetch conversations
-        function fetchConversations() {
-            $.ajax({
-                url: '/conversations',
-                method: 'GET',
-                success: function(response) {
-                    // Empty the conversations container
-                    $('#conversations').empty();
-                    // Check if conversations exist in the response
-                    if (response && response.length > 0) {
-                        // Loop through the conversations and append them to the conversations container
-                        response.forEach(function(conversation) {
-                            $('#conversations').append(
-                                '<li class="mb-2 conversation-link" data-sender-id="' + conversation
-                                .id + '">' +
-                                conversation.name + '</li>'
-                            );
-                        });
-                    } else {
-                        // Handle case when no conversations are returned
-                        $('#conversations').append('<p>No conversations found</p>');
-                    }
-                },
-                error: function(xhr, status, error) {
-                    console.error(xhr.responseText);
-                    // Handle error display
-                    $('#conversations').append('<p>Error loading conversations</p>');
-                }
-            });
-        }
-
         $(document).ready(function() {
-            // Call the function to fetch conversations when the page loads
-            fetchConversations();
-
-            $('#send').click(function() {
-                var message = $('#message').val();
-                var toUserId = $('#to_user_id').val();
-
+            // Function to fetch chat history
+            function fetchChatHistory() {
                 $.ajax({
-                    url: '{{ route('send') }}',
-                    method: 'POST',
-                    data: {
-                        to_user_id: toUserId,
-                        message: message,
-                        _token: '{{ csrf_token() }}'
-                    },
-                    success: function(response) {
-                        console.log(response);
-                        $('#message').val('');
-                    },
-                    error: function(xhr, status, error) {
-                        console.error(xhr.responseText);
+                    type: "GET",
+                    url: "/chat/{{ $receiver->id }}/history",
+                    success: function(data) {
+                        data.forEach(message => {
+                            if (message.sent_by_user) {
+                                // Message sent by the user
+                                let senderMessage = '' +
+                                    '<div class="flex justify-end items-center mb-4">' +
+                                    '<div class="bg-blue-500 text-white max-w-sm py-2 px-4 rounded-lg shadow-md">' +
+                                    '<p>' + message.message + '</p>' +
+                                    '</div>' +
+                                    '<img src="https://via.placeholder.com/40" alt="User" class="w-8 h-8 ml-2 rounded-full">' +
+                                    '</div>';
+                                $("#chat_area").append(senderMessage);
+                            } else {
+                                // Message received by the user
+                                let receiverMessage = ' ' +
+                                    '<div class="flex justify-start items-center mb-4">' +
+                                    '<img src="https://via.placeholder.com/40" alt="User" class="w-8 h-8 mr-2 rounded-full">' +
+                                    '<div class="bg-gray-200 text-gray-800 max-w-sm py-2 px-4 rounded-lg shadow-md">' +
+                                    '<p>' + message.message + '</p>' +
+                                    '</div>' +
+                                    '</div>';
+                                $("#chat_area").append(receiverMessage);
+                            }
+                        });
+                        // Scroll to the bottom of the chat area
+                        $("#chat_area").scrollTop($("#chat_area")[0].scrollHeight);
                     }
                 });
+            }
+
+            // Fetch chat history when the page loads
+            fetchChatHistory();
+
+            // Send message
+            $("#send").click(function() {
+                $.ajaxSetup({
+                    headers: {
+                        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                    }
+                });
+
+                $.post("/chat/{{ $receiver->id }}", {
+                        message: $("#message").val()
+                    },
+                    function(data, status) {
+                        console.log("Data: " + data + "\nStatus: " + status);
+                        let senderMessage = '' +
+                            '<div class="flex justify-end items-center mb-4">' +
+                            '<div class="bg-blue-500 text-white max-w-sm py-2 px-4 rounded-lg shadow-md">' +
+                            '<p>' + $("#message").val() + '</p>' +
+                            '</div>' +
+                            '<img src="https://via.placeholder.com/40" alt="User" class="w-8 h-8 ml-2 rounded-full">' +
+                            '</div>';
+                        $("#chat_area").append(senderMessage);
+                        $("#message").val(''); // Clear input after sending message
+                        // Scroll to the bottom of the chat area
+                        $("#chat_area").scrollTop($("#chat_area")[0].scrollHeight);
+                    }
+                )
+            })
+            Pusher.logToConsole = true;
+            var pusher = new Pusher('e9356270b0595810faa9', {
+                cluster: 'eu'
             });
 
-            // Fetch and display conversation messages when a conversation is selected
-            $('body').on('click', '.conversation-link', function(event) {
-                event.preventDefault();
-                var senderId = $(this).data('sender-id');
-                $('#to_user_id').val(senderId);
-                fetchMessageHistory(senderId);
+            var channel = pusher.subscribe('chat{{ Auth::user()->id }}');
+            channel.bind('chatMessage', function(data) {
+                if (data.sent_by_user) {
+                    // Message sent by the user
+                    let senderMessage = '' +
+                        '<div class="flex justify-end items-center mb-4">' +
+                        '<div class="bg-blue-500 text-white max-w-sm py-2 px-4 rounded-lg shadow-md">' +
+                        '<p>' + data.message + '</p>' +
+                        '</div>' +
+                        '<img src="https://via.placeholder.com/40" alt="User" class="w-8 h-8 ml-2 rounded-full">' +
+                        '</div>';
+                    $("#chat_area").append(senderMessage);
+                } else {
+                    // Message received by the user
+                    let receiverMessage = ' ' +
+                        '<div class="flex justify-start items-center mb-4">' +
+                        '<img src="https://via.placeholder.com/40" alt="User" class="w-8 h-8 mr-2 rounded-full">' +
+                        '<div class="bg-gray-200 text-gray-800 max-w-sm py-2 px-4 rounded-lg shadow-md">' +
+                        '<p>' + data.message + '</p>' +
+                        '</div>' +
+                        '</div>';
+                    $("#chat_area").append(receiverMessage);
+                }
+                // Scroll to the bottom of the chat area
+                $("#chat_area").scrollTop($("#chat_area")[0].scrollHeight);
             });
-
-            // Fetch new messages every 2 seconds
-            fetchNewMessages();
         });
     </script>
-
 </body>
 
 </html>
