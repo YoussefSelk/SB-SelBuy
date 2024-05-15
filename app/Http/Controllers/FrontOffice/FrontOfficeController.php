@@ -8,6 +8,7 @@ use App\Models\AnnouncementImage;
 use App\Models\Category;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
@@ -44,8 +45,9 @@ class FrontOfficeController extends Controller
             $query->where('name', 'Electronics');
         })->get();
 
+        $posts = Post::latest()->get();
 
-        return view('index', compact('featuredProducts', 'categories', 'carAnnouncements', 'techAnnouncements'));
+        return view('index', compact('featuredProducts', 'posts', 'categories', 'carAnnouncements', 'techAnnouncements'));
     }
 
     public function announcement_details($id)

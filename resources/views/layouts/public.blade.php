@@ -29,17 +29,50 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
 
     <!-- Tailwind CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.5.7/jquery.fancybox.min.js"></script>
+
+
+    @yield('script')
+    @yield('styles')
+    <!-- Styles -->
+    <style>
+        ::-webkit-scrollbar {
+            width: 5px;
+        }
+
+        /* Track */
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+
+        /* Handle */
+        ::-webkit-scrollbar-thumb {
+            background: #888;
+            border-radius: 12px;
+        }
+
+        /* Handle on hover */
+        ::-webkit-scrollbar-thumb:hover {
+            background: #555;
+        }
+
+        [x-cloak] {
+            display: none;
+        }
+    </style>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
 
 </head>
 
-<body class="bg-gray-100 flex flex-col min-h-screen">
+<body class="bg-slate-50 flex flex-col min-h-screen">
 
     <header>
         <div class="contain mx-auto">
             <!-- Include the navbar component -->
             @include('layouts.nav.public-nav')
+            @yield('carousel')
         </div>
     </header>
 

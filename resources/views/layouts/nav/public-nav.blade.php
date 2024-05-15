@@ -21,6 +21,14 @@
                 <li><a href="#" class="hover:text-gray-300 text-gray-700">Terms & Conditions</a></li>
             </ul>
         </div>
+        @if (Auth::check() && Auth::user()->hasRole('Seller') && Auth::user()->hasRole('Buyer'))
+            <div class="hidden md:flex items-center mr-4">
+                <a href="{{ route('chat.conversations') }} " class="text-blue-500 hover:text-blue-700">
+                    <i class="fas fa-comment text-3xl"></i>
+                </a>
+            </div>
+        @endif
+
         <div class="hidden md:flex">
             @if (Auth::check() && Auth::user()->hasRole('Seller'))
                 <div class="mr-4">

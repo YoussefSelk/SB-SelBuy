@@ -218,7 +218,7 @@
                         @endif
                     </div>
                     <div>
-                        <a href="{{ route('chat.start', $announcement->user->id) }}">
+                        <a href="{{ route('chat', $announcement->user->id) }}">
                             <i class="fa fa-regular fa-comments" style="color: #74C0FC;"></i>
                         </a>
                     </div>

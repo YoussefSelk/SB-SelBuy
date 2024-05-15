@@ -10,6 +10,7 @@ use App\Models\AnnouncementImage;
 use App\Models\Category;
 use App\Models\Role;
 use App\Models\User;
+use App\Models\Post;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -82,6 +83,13 @@ class AdminDashboardController extends Controller
         }
         return view('admin.CRUD.announcement.announcement-details')->with(compact('announcement'));
     }
+
+    public function create()
+    {
+        return view('admin.post');
+    }
+
+
     /////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// CRUD  /////////////////////////////////
     /////////////////////////////////////////////////////////////////////////
@@ -327,5 +335,25 @@ class AdminDashboardController extends Controller
         }
 
         return redirect()->back()->with('success', 'Images added successfully.');
+    }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $imageName = time() . '.' . $request->image->extension();
+        $request->image->move(public_path('post_images'), $imageName);
+
+        $post = new Post();
+        $post->title = $request->title;
+        $post->description = $request->description;
+        $post->image_url = '/post_images/' . $imageName;
+        $post->save();
+
+        return redirect()->route('admin.posts.create')->with('success', 'Post created successfully.');
     }
 }

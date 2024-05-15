@@ -1,16 +1,59 @@
 @extends('layouts.public')
 
 @section('title', 'Home')
-
+@section('carousel')
+    <div id="animation-carousel" class="relative w-full" data-carousel="static">
+        <!-- Carousel wrapper -->
+        <div class="relative h-56 md:h-96 overflow-hidden ">
+            @foreach ($posts as $post)
+                <!-- Item -->
+                <div class="hidden duration-200 ease-linear" data-carousel-item>
+                    <div class="absolute inset-0 bg-gradient-to-t from-rose-200 to-transparent"></div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-gray-900 to-transparent"></div>
+                    <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="flex items-center justify-center w-full h-full p-4">
+                            <div class="w-1/2 text-center">
+                                <h2 class="text-[67px] font-bold text-white">{{ $post->title }}</h2>
+                                <p class="text-sm text-white">{{ $post->description }}</p>
+                            </div>
+                            <a href="{{ $post->image_url }}" data-fancybox="gallery"
+                                class="w-1/2 h-full flex items-center justify-center">
+                                <img src="{{ $post->image_url }}" class="w-64 h-56 border border-gray-200 rounded-lg"
+                                    alt="{{ $post->title }}">
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        </div>
+        <!-- Slider controls -->
+        <button type="button"
+            class="absolute top-1/2 left-4 z-30 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-2 focus:outline-none"
+            data-carousel-prev>
+            <svg class="w-6 h-6 text-gray-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+            </svg>
+        </button>
+        <button type="button"
+            class="absolute top-1/2 right-4 z-30 transform -translate-y-1/2 bg-white bg-opacity-50 rounded-full p-2 focus:outline-none"
+            data-carousel-next>
+            <svg class="w-6 h-6 text-gray-900" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+        </button>
+    </div>
+@endsection
 @section('content')
 
     <div class="container mx-auto px-4">
-        <div class="mt-12 mb-12">
-            <img src="https://via.placeholder.com/728x90" alt="Advertisement" class="w-full">
-        </div>
+
+
+
 
         <!-- Featured Products Section -->
-        <div class="mb-12">
+        <div class="mb-12 mt-12">
             <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Featured Products</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-8">
                 @foreach ($featuredProducts as $product)

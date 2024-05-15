@@ -31,6 +31,9 @@ include 'web/BackOffice/users.php';
 //The Users Routes (BackOffice)
 include 'web/BackOffice/categories.php';
 
+include 'web/BackOffice/post.php';
+
+
 //The Profile Routes (Others)
 include 'web/others/profile.php';
 
