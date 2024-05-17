@@ -127,19 +127,16 @@ class AdminDashboardController extends Controller
         }
 
 
-        $announcements = Announcement::where('user_id', $user->id)->get();
-        if ($announcements) {
-            foreach ($announcements as $announcement) {
-                $announcement->delete();
-            }
-        }
+        // Delete related announcements
+        $user->announcements()->delete();
 
-        $roles = $user->roles;
-        if ($roles) {
-            foreach ($roles as $role) {
-                $user->removeRole($role->name);
-            }
-        }
+        // Delete related messages sent by the user
+        $user->sentMessages()->delete();
+
+        // Delete related messages received by the user
+        $user->receivedMessages()->delete();
+
+        $user->roles()->detach();
 
         $user->delete();
         return redirect()->route('admin.users')
@@ -355,5 +352,26 @@ class AdminDashboardController extends Controller
         $post->save();
 
         return redirect()->route('admin.posts.create')->with('success', 'Post created successfully.');
+    }
+    public function suspendUser($id)
+    {
+        $user = User::find($id);
+        if ($user) {
+            $user->status = 'inactive';
+            $user->save();
+            return response()->json(['success' => true, 'message' => 'User suspended successfully']);
+        }
+        return response()->json(['success' => false, 'message' => 'User not found']);
+    }
+
+    public function activateUser($id)
+    {
+        $user = User::find($id);
+        if ($user) {
+            $user->status = 'active';
+            $user->save();
+            return response()->json(['success' => true, 'message' => 'User activated successfully']);
+        }
+        return response()->json(['success' => false, 'message' => 'User not found']);
     }
 }

@@ -49,6 +49,15 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        if ($user->announcements) {
+            $user->announcements()->delete();
+        }
+        $user->sentMessages()->delete();
+
+        $user->receivedMessages()->delete();
+
+        $user->roles()->detach();
+
         Auth::logout();
 
         $user->delete();

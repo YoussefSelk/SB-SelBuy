@@ -17,7 +17,7 @@
 
     <div class="p-6 bg-white rounded-md shadow-md overflow-hidden">
         <div class="overflow-x-auto ">
-            <x-my-components.dash-table :headers="['Avatar', '#', 'Name', 'Email', 'Role', 'Action']">
+            <x-my-components.dash-table :headers="['Avatar', '#', 'Name', 'Email', 'Role', 'Status', 'Action']">
                 @foreach ($users as $user)
                     <tr class="border-b border-gray-200 dark:border-gray-600">
                         <td class="px-6 py-4 whitespace-nowrap">
@@ -39,6 +39,7 @@
                                     class="@if ($role->name == 'Admin' || $role->name == 'SuperAdmin') text-red-600 @else text-gray-800 @endif  bg-gray-200  text-xs font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-gray-700 dark:text-gray-300">{{ $role->name }}</span>
                             @endforeach
                         </td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $user->status }}</td>
                         <td class="px-6 py-4 whitespace-nowrap">
                             @if (Auth::user()->hasRole('SuperAdmin'))
                                 @if ($user->hasRole('SuperAdmin'))
@@ -59,6 +60,12 @@
                                         <i class="fas fa-trash"></i> Delete
                                     </button>
                                 </form>
+                                <!-- Your Blade View -->
+                                @if ($user->status == 'active')
+                                    <button class="suspendUser" data-id="{{ $user->id }}">Suspend User</button>
+                                @else
+                                    <button class="activateUser" data-id="{{ $user->id }}">Activate User</button>
+                                @endif
                             @elseif (Auth::user()->hasRole('Admin'))
                                 @if ($user->hasRole('SuperAdmin') || $user->hasRole('Admin'))
                                     <span class="text-red-500">
@@ -78,6 +85,8 @@
                                         <i class="fas fa-trash"></i> Delete
                                     </button>
                                 </form>
+                                <button class="suspendUser" data-id="{{ $user->id }}">Suspend User</button>
+                                <button class="activateUser" data-id="{{ $user->id }}">Activate User</button>
                             @endif
                             <a href="{{ route('admin.details.user', $user->id) }}"
                                 class="ml-2 text-indigo-600 hover:text-indigo-900"> <i class="fas fa-eye"></i>
@@ -117,5 +126,78 @@
             toastr.success("{{ session('success') }}");
         @endif
     </script>
+    <!-- Your Blade View -->
+
+    
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@10"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.suspendUser').click(function() {
+                var userId = $(this).data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to suspend this user!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, suspend it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/admin/suspend/user/' + userId,
+                            type: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                toastr.success(response.message);
+                                // Update UI
+                                $('#status_' + userId).text('Inactive');
+                            },
+                            error: function(xhr) {
+                                alert('Error: ' + xhr.responseText);
+                            }
+                        });
+                    }
+                });
+            });
+
+            $('.activateUser').click(function() {
+                var userId = $(this).data('id');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You want to activate this user!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, activate it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            url: '/admin/activate/user/' + userId,
+                            type: 'POST',
+                            data: {
+                                _token: "{{ csrf_token() }}"
+                            },
+                            success: function(response) {
+                                toastr.success(response.message);
+                                // Update UI
+                                $('#status_' + userId).text('Active');
+                            },
+                            error: function(xhr) {
+                                alert('Error: ' + xhr.responseText);
+                            }
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+
 </x-app-layout>
 @include('modals.add-user-modal')

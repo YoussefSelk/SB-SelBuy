@@ -52,15 +52,23 @@ class User extends Authenticatable  implements LaratrustUser
 
     public function sentMessages()
     {
-        return $this->hasMany(Message::class, 'from_user_id');
+        return $this->hasMany(Message::class, 'sender');
     }
 
     public function receivedMessages()
     {
-        return $this->hasMany(Message::class, 'to_user_id');
+        return $this->hasMany(Message::class, 'receiver');
     }
     public function conversations()
     {
         return $this->hasMany(Conversation::class);
+    }
+    public function hasFavorite($announcementId)
+    {
+        return $this->favorites()->where('announcement_id', $announcementId)->exists();
+    }
+    public function favorites()
+    {
+        return $this->hasMany(Favorite::class);
     }
 }

@@ -15,20 +15,30 @@
         <div id="controls-carousel" class="relative w-full" data-carousel="static">
             <div class="relative h-72 overflow-hidden md:h-96">
                 <!-- Carousel -->
-                @foreach ($announcement->images as $key => $image)
+                @if ($announcement->images->count() > 0)
+                    @foreach ($announcement->images as $key => $image)
+                        <div class="hidden duration-700 ease-in-out" data-carousel-item>
+                            <img src="{{ asset('images/' . $image->image_path) }}"
+                                class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                                alt="...">
+                            @if (Auth::check() && Auth::user()->id == $announcement->user_id)
+                                <a href="#"
+                                    class="deleteImage absolute top-3 left-3 p-2 bg-slate-500 rounded-full cursor-pointer "
+                                    data-image-id="{{ $image->id }}">
+                                    <i class="fa fa-solid fa-trash text-red-500"></i>
+                                </a>
+                            @endif
+                        </div>
+                    @endforeach
+                @else
                     <div class="hidden duration-700 ease-in-out" data-carousel-item>
-                        <img src="{{ asset('images/' . $image->image_path) }}"
-                            class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2" alt="...">
-                        @if (Auth::check() && Auth::user()->id == $announcement->user_id)
-                            <a href="#"
-                                class="deleteImage absolute top-3 left-3 p-2 bg-slate-500 rounded-full cursor-pointer "data-image-id="{{ $image->id }}">
-                                <i class="fa fa-solid fa-trash text-red-500"></i>
-                            </a>
-                        @endif
+                        <img src="https://via.placeholder.com/300x200.png?text=No+Image+Available"
+                            class="absolute block w-full -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2"
+                            alt="No Image Available">
                     </div>
-                @endforeach
-
+                @endif
             </div>
+
             <!-- Slider controls -->
             <button type="button"
                 class="absolute top-1/2 left-4 transform -translate-y-1/2 z-30 flex items-center justify-center h-10 w-10 bg-white rounded-full shadow-md focus:outline-none"

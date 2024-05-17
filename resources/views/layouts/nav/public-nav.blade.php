@@ -15,10 +15,16 @@
             <ul class="flex space-x-4">
                 <li><a href="{{ route('home') }}" class="hover:text-gray-300 text-gray-700">Home</a></li>
                 <li><a href="#" class="hover:text-gray-300 text-gray-700">Contact</a></li>
-                <li><a href="#" class="hover:text-gray-300 text-gray-700">About Us</a></li>
+                <li><a href="{{ route('about.us') }}" class="hover:text-gray-300 text-gray-700">About Us</a></li>
                 <li><a href="#" class="hover:text-gray-300 text-gray-700">FAQ</a></li>
-                <li><a href="#" class="hover:text-gray-300 text-gray-700">Privacy Policy</a></li>
-                <li><a href="#" class="hover:text-gray-300 text-gray-700">Terms & Conditions</a></li>
+                <li>
+                    <a href="{{ route('privacy.policy') }}" class="hover:text-gray-300 text-gray-700">Privacy Policy</a>
+                </li>
+                <li>
+                    <a href="{{ route('terms.and.conditions') }}" class="hover:text-gray-300 text-gray-700">
+                        Terms & Conditions
+                    </a>
+                </li>
             </ul>
         </div>
         @if (Auth::check() && Auth::user()->hasRole('Seller') && Auth::user()->hasRole('Buyer'))
@@ -104,6 +110,9 @@
                                 {{ __('My Announcements') }}
                             </x-dropdown-link>
                         @endif
+                        <x-dropdown-link :href="route('favorites')">
+                            {{ __('Favorites') }}
+                        </x-dropdown-link>
                         <!-- If the user is authenticated -->
                         <x-dropdown-link :href="route('profile.edit')">
                             {{ __('Profile') }}

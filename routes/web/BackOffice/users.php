@@ -26,4 +26,8 @@ Route::middleware(['auth', 'verified', 'role:Admin'])->name('admin.')->group(fun
     ///////////////////////////////         User View Details         ///////////////////////////////
 
     Route::get('/admin/user/details/{id}', [AdminDashboardController::class, 'user_details'])->name('details.user');
+
+    // web.php
+    Route::post('/admin/suspend/user/{id}', [AdminDashboardController::class, 'suspendUser'])->name('suspend.user');
+    Route::post('/admin/activate/user/{id}', [AdminDashboardController::class, 'activateUser'])->name('activate.user');
 });

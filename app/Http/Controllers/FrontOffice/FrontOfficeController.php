@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\AnnouncementImage;
 use App\Models\Category;
+use App\Models\Favorite;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Post;
@@ -24,31 +25,45 @@ class FrontOfficeController extends Controller
 
     public function index()
     {
+        $announcements = Announcement::whereHas('user', function ($query) {
+            $query->where('status', 'active');
+        })->get();
 
-        $announcements = Announcement::all();
         // Fetch featured products
         $featuredProducts = Announcement::where('is_active', true)
+            ->whereHas('user', function ($query) {
+                $query->where('status', 'active');
+            })
             ->orderBy('created_at', 'desc')
             ->limit(8)
             ->get();
 
         // Fetch categories with the count of announcements
-        $categories = Category::withCount('announcements')
+        $categories = Category::withCount(['announcements' => function ($query) {
+            $query->whereHas('user', function ($query) {
+                $query->where('status', 'active');
+            });
+        }])
             ->orderBy('created_at', 'desc')
             ->get();
 
         $carAnnouncements = Announcement::whereHas('category', function ($query) {
             $query->where('name', 'Cars');
+        })->whereHas('user', function ($query) {
+            $query->where('status', 'active');
         })->get();
 
         $techAnnouncements = Announcement::whereHas('category', function ($query) {
             $query->where('name', 'Electronics');
+        })->whereHas('user', function ($query) {
+            $query->where('status', 'active');
         })->get();
 
         $posts = Post::latest()->get();
 
         return view('index', compact('featuredProducts', 'posts', 'categories', 'carAnnouncements', 'techAnnouncements'));
     }
+
 
     public function announcement_details($id)
     {
@@ -97,6 +112,19 @@ class FrontOfficeController extends Controller
     {
         return view('FrontOffice.privacy_policy');
     }
+    public function about_us()
+    {
+        return view('FrontOffice.about_us');
+    }
+    public function favorites()
+    {
+        // Get the authenticated user's favorite announcements with their images
+        $favorites = auth()->user()->favorites()->with('announcement.images')->get();
+
+        // Pass the favorites data to the view
+        return view('FrontOffice.CRUD.my-favorites', compact('favorites'));
+    }
+
     /////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// CRUD  /////////////////////////////////
     /////////////////////////////////////////////////////////////////////////
@@ -168,10 +196,12 @@ class FrontOfficeController extends Controller
         $announcements = Announcement::with('user', 'images')
             ->where('is_active', true);
 
+        // Filtering by category
         if ($request->filled('category')) {
             $announcements->where('category_id', $request->input('category'));
         }
 
+        // Filtering by price range
         if ($request->filled('price_min')) {
             $announcements->where('price', '>=', $request->input('price_min'));
         }
@@ -180,10 +210,21 @@ class FrontOfficeController extends Controller
             $announcements->where('price', '<=', $request->input('price_max'));
         }
 
+        // Search query
+        if ($request->filled('search')) {
+            $searchTerm = $request->input('search');
+            $announcements->where(function ($query) use ($searchTerm) {
+                $query->where('title', 'like', "%$searchTerm%")
+                    ->orWhere('description', 'like', "%$searchTerm%");
+            });
+        }
+
+        // Paginate the results
         $announcements = $announcements->paginate(10);
 
         return response()->json(['announcements' => $announcements]);
     }
+
     public function become_seller(Request $request, $id)
     {
         $request->validate([
@@ -259,5 +300,45 @@ class FrontOfficeController extends Controller
         }
 
         return redirect()->route('home')->with('success', 'Announcement created successfully.');
+    }
+
+
+    public function search(Request $request)
+    {
+        $searchQuery = $request->input('query');
+        $category = $request->input('category');
+        $ville = $request->input('ville');
+
+        $announcements = Announcement::query()
+            ->when($category, function ($query) use ($category) {
+                return $query->where('category_id', $category);
+            })
+            ->when($ville, function ($query) use ($ville) {
+                return $query->where('ville', 'like', '%' . $ville . '%');
+            })
+            ->where(function ($subQuery) use ($searchQuery) {
+                $subQuery->where('title', 'like', '%' . $searchQuery . '%')
+                    ->orWhere('description', 'like', '%' . $searchQuery . '%');
+            })
+            ->with('user', 'images')
+            ->get();
+
+        return response()->json(['announcements' => $announcements]);
+    }
+    public function addToFavorites(Request $request)
+    {
+        $favorite = Favorite::create([
+            'user_id' => auth()->id(),
+            'announcement_id' => $request->announcement_id,
+        ]);
+
+        return response()->json(['success' => true]);
+    }
+
+    public function removeFromFavorites($id)
+    {
+        Favorite::where('announcement_id', $id)->delete();
+
+        return response()->json(['success' => true]);
     }
 }
