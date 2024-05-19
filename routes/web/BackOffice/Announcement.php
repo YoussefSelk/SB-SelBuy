@@ -15,4 +15,7 @@ Route::middleware(['auth', 'verified', 'role:Admin'])->name('admin.')->group(fun
     Route::get('/admin/announcement/image/delete/{id}', [AdminDashboardController::class, 'deleteImage'])->name('delete.image.annoucement');
 
     Route::post('/admin/announcement/{id}/add-images', [AdminDashboardController::class, 'addImages'])->name('add.images.annoucement');
+    // routes/web.php
+    Route::post('/admin/announcements/{announcement}/suspend', [AdminDashboardController::class, 'suspend_announcement'])->name('suspend.announcement');
+    Route::post('/admin/announcements/{announcement}/unsuspend', [AdminDashboardController::class, 'unsuspend_announcement'])->name('unsuspend.announcement');
 });

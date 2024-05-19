@@ -13,6 +13,7 @@ Route::get('/announcements/search', [FrontOfficeController::class, 'search'])->n
 Route::middleware(['auth'])->group(function () {
     Route::put('/announcement/{announcement}', [FrontOfficeController::class, 'update_announcement'])->name('announcement.update');
     Route::delete('/announcement/delete/image/{id}', [FrontOfficeController::class, 'deleteImage'])->name('announcement.deleteImage');
+    Route::delete('/announcement/delete/{id}', [FrontOfficeController::class, 'delete_announcement'])->name('announcement.delete');
 
 
 

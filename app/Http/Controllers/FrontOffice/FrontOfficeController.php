@@ -25,11 +25,13 @@ class FrontOfficeController extends Controller
 
     public function index()
     {
-        $announcements = Announcement::whereHas('user', function ($query) {
-            $query->where('status', 'active');
-        })->get();
+        // Fetch all announcements with 'is_active' true
+        $announcements = Announcement::where('is_active', true)
+            ->whereHas('user', function ($query) {
+                $query->where('status', 'active');
+            })->get();
 
-        // Fetch featured products
+        // Fetch featured products with 'is_active' true
         $featuredProducts = Announcement::where('is_active', true)
             ->whereHas('user', function ($query) {
                 $query->where('status', 'active');
@@ -38,31 +40,38 @@ class FrontOfficeController extends Controller
             ->limit(8)
             ->get();
 
-        // Fetch categories with the count of announcements
+        // Fetch categories with the count of announcements that are 'is_active' true
         $categories = Category::withCount(['announcements' => function ($query) {
-            $query->whereHas('user', function ($query) {
-                $query->where('status', 'active');
-            });
+            $query->where('is_active', true)
+                ->whereHas('user', function ($query) {
+                    $query->where('status', 'active');
+                });
         }])
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $carAnnouncements = Announcement::whereHas('category', function ($query) {
-            $query->where('name', 'Cars');
-        })->whereHas('user', function ($query) {
-            $query->where('status', 'active');
-        })->get();
+        // Fetch car announcements with 'is_active' true
+        $carAnnouncements = Announcement::where('is_active', true)
+            ->whereHas('category', function ($query) {
+                $query->where('name', 'Cars');
+            })->whereHas('user', function ($query) {
+                $query->where('status', 'active');
+            })->get();
 
-        $techAnnouncements = Announcement::whereHas('category', function ($query) {
-            $query->where('name', 'Electronics');
-        })->whereHas('user', function ($query) {
-            $query->where('status', 'active');
-        })->get();
+        // Fetch tech announcements with 'is_active' true
+        $techAnnouncements = Announcement::where('is_active', true)
+            ->whereHas('category', function ($query) {
+                $query->where('name', 'Electronics');
+            })->whereHas('user', function ($query) {
+                $query->where('status', 'active');
+            })->get();
 
+        // Fetch latest posts
         $posts = Post::latest()->get();
 
         return view('index', compact('featuredProducts', 'posts', 'categories', 'carAnnouncements', 'techAnnouncements'));
     }
+
 
 
     public function announcement_details($id)
@@ -97,10 +106,10 @@ class FrontOfficeController extends Controller
         $categories = Category::all();
         return view('FrontOffice.CRUD.create-announcement')->with(compact('categories'));
     }
-    public function my_announcement_view($id)
+    public function my_announcement_view()
     {
-        $user = User::findOrFail($id);
-        $announcements = Announcement::where('user_id', $id)->get();
+        $user = Auth::user();
+        $announcements = Announcement::where('user_id', $user->id)->get();
 
         return view('FrontOffice.seller.my-announcements')->with(compact('user', 'announcements'));
     }
@@ -341,4 +350,23 @@ class FrontOfficeController extends Controller
 
         return response()->json(['success' => true]);
     }
+    public function delete_announcement($id)
+    {
+        $announcement = Announcement::find($id);
+        if ($announcement) {
+            foreach ($announcement->images as $image) {
+                $imagePath = public_path('images/' . $image->image_path);
+                if (file_exists($imagePath)) {
+                    unlink($imagePath);
+                }
+                $image->delete();
+            }
+            $announcement->delete();
+
+            return response()->json(['message' => 'Announcement deleted successfully']);
+        } else {
+            return response()->json(['message' => 'Failed to delete the Announcement']);
+        }
+    }
+    
 }

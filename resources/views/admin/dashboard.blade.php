@@ -55,6 +55,20 @@
             </div>
         </div>
     </div>
+    <div
+        class="p-6 mt-12 bg-white rounded-md shadow-md overflow-hidden flex flex-col md:flex-row justify-around items-center dark:bg-dark-eval-1">
+        <div style="width: 50%; margin: auto;">
+            {!! $userChart->container() !!}
+        </div>
 
+        {!! $userChart->script() !!}
+    </div>
+    <div
+        class="p-6 mt-12 bg-white rounded-md shadow-md overflow-hidden flex flex-col md:flex-row justify-around items-center dark:bg-dark-eval-1">
+        <div style="width: 50%; margin: auto;">
+            {!! $cityChart->container() !!}
+        </div>
 
+        {!! $cityChart->script() !!}
+    </div>
 </x-app-layout>

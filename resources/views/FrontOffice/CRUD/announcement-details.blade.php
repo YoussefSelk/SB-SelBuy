@@ -63,6 +63,18 @@
         <!-- Content Container -->
         <div class="p-8">
             @if (Auth::check() && Auth::user()->id == $announcement->user_id)
+                <!-- Add this inside the form or where you want the delete button -->
+                <form id="deleteAnnouncementForm" action="{{ route('announcement.delete', $announcement->id) }}"
+                    method="POST">
+                    @csrf
+                    @method('DELETE')
+                    <button type="button" id="deleteAnnouncementBtn"
+                        class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 focus:outline-none focus:bg-red-600">Delete
+                        Announcement</button>
+                </form>
+            @endif
+
+            @if (Auth::check() && Auth::user()->id == $announcement->user_id)
                 <form id="announcementForm" action="{{ route('announcement.update', $announcement->id) }}" method="POST"
                     enctype="multipart/form-data">
                     @csrf
@@ -101,7 +113,8 @@
                             </option>
                             <option value="Benslimane" @if ($announcement->ville == 'Benslimane') selected @endif>Benslimane</option>
                             <option value="Bouznika" @if ($announcement->ville == 'Bouznika') selected @endif>Bouznika</option>
-                            <option value="Casablanca" @if ($announcement->ville == 'Casablanca') selected @endif>Casablanca</option>
+                            <option value="Casablanca" @if ($announcement->ville == 'Casablanca') selected @endif>Casablanca
+                            </option>
                             <option value="Chefchaouen" @if ($announcement->ville == 'Chefchaouen') selected @endif>Chefchaouen
                             </option>
                             <option value="Dakhla" @if ($announcement->ville == 'Dakhla') selected @endif>Dakhla</option>
@@ -120,7 +133,8 @@
                             </option>
                             <option value="Laayoune" @if ($announcement->ville == 'Laayoune') selected @endif>Laayoune</option>
                             <option value="Larache" @if ($announcement->ville == 'Larache') selected @endif>Larache</option>
-                            <option value="Marrakech" @if ($announcement->ville == 'Marrakech') selected @endif>Marrakech</option>
+                            <option value="Marrakech" @if ($announcement->ville == 'Marrakech') selected @endif>Marrakech
+                            </option>
                             <option value="Martil" @if ($announcement->ville == 'Martil') selected @endif>Martil</option>
                             <option value="Meknes" @if ($announcement->ville == 'Meknes') selected @endif>Meknes</option>
                             <option value="Mohammedia" @if ($announcement->ville == 'Mohammedia') selected @endif>Mohammedia
@@ -296,6 +310,48 @@
                     },
                     error: function(data) {
                         toastr.error('An error occurred while deleting the image.');
+                    }
+                });
+            });
+        });
+        $(document).ready(function() {
+            $('#deleteAnnouncementBtn').click(function(e) {
+                e.preventDefault();
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: 'You are about to delete this announcement!',
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, delete it!',
+                    cancelButtonText: 'No, keep it'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            type: 'DELETE',
+                            url: $('#deleteAnnouncementForm').attr('action'),
+                            data: {
+                                "_token": "{{ csrf_token() }}"
+                            },
+                            dataType: 'json',
+                            success: function(data) {
+                                Swal.fire(
+                                    'Deleted!',
+                                    'Your announcement has been deleted.',
+                                    'success'
+                                ).then(() => {
+                                    window.location.href =
+                                        "{{ route('user.my.announcements.view') }}";
+                                });
+                            },
+                            error: function(data) {
+                                Swal.fire(
+                                    'Error!',
+                                    'An error occurred while deleting the announcement.',
+                                    'error'
+                                );
+                            }
+                        });
                     }
                 });
             });

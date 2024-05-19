@@ -1,7 +1,10 @@
 <nav x-data="{ open: false }" class="bg-transparent text-gray-700 relative z-50">
     <div class="container mx-auto flex items-center justify-between py-4">
         <h1 class="text-lg md:text-2xl font-bold transition-all duration-300 ml-3 md:ml-0">
-            <a href="{{ route('home') }}" class="text-gray-700">SelBuy</a>
+            <a href="{{ route('home') }}" class="text-gray-700">
+                <x-application-logo class="block h-9 w-auto mr-2" />
+                <span class="self-center text-xl font-semibold sm:text-2xl whitespace-nowrap dark:text-white"></span>
+            </a>
         </h1>
 
         <!-- Hamburger -->

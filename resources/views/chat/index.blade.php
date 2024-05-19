@@ -26,9 +26,7 @@
             <!-- Chat Header -->
             <div class="bg-gray-800 text-white p-4 flex justify-between items-center">
                 <h1 class="text-lg font-semibold">Chat</h1>
-                <button
-                    class="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg focus:outline-none focus:ring focus:ring-blue-300">New
-                    Chat</button>
+
             </div>
 
             <!-- Chat Messages -->

@@ -9,7 +9,8 @@
             <div class="hidden duration-200 ease-linear" data-carousel-item>
                 <div
                     class="bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-700 text-white p-8 min-h-[700px] md:min-h-[700px] flex flex-col md:flex-row justify-around items-center">
-                    <div class="container mx-auto text-center md:text-left mb-4 md:mb-0 md:mr-4">
+                    <div
+                        class="animate__animated  animate__fadeInLeft  container mx-auto text-center md:text-left mb-4 md:mb-0 md:mr-4">
                         <h1 class="text-4xl font-bold mb-2">Welcome to our Website</h1>
                         <p class="mb-4">We're glad to have you here!</p>
                         <p class="mb-4">Explore our latest posts and enjoy your time.</p>
@@ -20,7 +21,7 @@
                         </div>
                         <p class="text-xs mt-4">Today is {{ now()->format('l, F jS, Y') }}</p>
                     </div>
-                    <div class="flex justify-center md:ml-4">
+                    <div class="animate__animated animate__fadeInRight  flex justify-center md:ml-4">
                         <img src="https://via.placeholder.com/400x600" alt="Welcome Image"
                             class="object-cover h-auto md:h-full max-w-full">
                     </div>
@@ -74,7 +75,7 @@
 @section('content')
     <div class="container mx-auto px-4">
         <!-- Filter Section -->
-        <div class="mb-8 mt-8">
+        <div class="animate__animated  animate__fadeIn mb-8 mt-8">
             <h2 class="text-2xl font-bold mb-2">Filter:</h2>
             <form id="filterForm" action="{{ route('filter.announcements') }}" method="GET"
                 class="bg-gray-100 rounded-lg shadow-md p-6">
@@ -140,14 +141,14 @@
         </div>
 
         <div id="announcementsContainer"
-            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-8 mb-12">
+            class="animate__animated  animate__fadeIn  grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-8 mb-12">
             <!-- Filtered announcements will be displayed here -->
         </div>
 
 
 
         <!-- Featured Products Section -->
-        <div class="mb-12 mt-12">
+        <div class="animate__animated  animate__fadeIn  mb-12 mt-12">
             <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Featured Products</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-8">
                 @foreach ($featuredProducts as $product)
@@ -156,7 +157,6 @@
                         <div
                             class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-shadow duration-300">
                             <div class="flex items-center p-4 border-b border-gray-100">
-
                                 <div class="mr-4">
                                     @if ($product->user->avatar)
                                         <img src="{{ asset('storage/profile_pictures/' . $product->user->avatar) }}"
@@ -209,7 +209,8 @@
                                                 data-announcement-id="{{ $product->id }}">Add to Favorites</button>
                                         @endif
                                     @else
-                                        <p>Please <a href="{{ route('login') }}">login</a> to add to favorites.</p>
+                                        <p>Please Login to add to favorites.</p>
+
                                     @endif
                                 </div>
                             </div>
@@ -224,7 +225,7 @@
 
 
         <!-- Car Announcement Section -->
-        <div class="mb-8">
+        <div class="animate__animated  animate__fadeIn  mb-8">
             <h2 class="text-2xl font-bold mb-4">Car Announcements</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-8">
                 @foreach ($carAnnouncements as $product)
@@ -279,7 +280,7 @@
         </div>
 
         <!-- Tech Announcement Section -->
-        <div class="mb-8">
+        <div class="animate__animated  animate__fadeIn  mb-8">
             <h2 class="text-2xl font-bold mb-4">Tech Announcements</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-8">
                 @foreach ($techAnnouncements as $product)
@@ -333,7 +334,7 @@
             </div>
         </div>
         <!-- Categories Section -->
-        <div class="mb-12">
+        <div class="animate__animated  animate__fadeIn  mb-12">
             <h2 class="text-2xl font-bold mb-4 text-center text-gray-800">Categories</h2>
             <div id="categories-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                 @foreach ($categories as $category)
@@ -376,7 +377,7 @@
 
 
         <!-- Advertisement Section -->
-        <div class="mb-12">
+        <div class="animate__animated  animate__fadeIn  mb-12">
             <img src="https://via.placeholder.com/728x90" alt="Advertisement" class="w-full">
         </div>
     </div>

@@ -4,6 +4,8 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Charts\UserCityChart;
+use App\Charts\UsersChart;
 use App\Http\Controllers\Controller;
 use App\Models\Announcement;
 use App\Models\AnnouncementImage;
@@ -18,6 +20,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\DB;
 
 class AdminDashboardController extends Controller
 {
@@ -25,13 +28,44 @@ class AdminDashboardController extends Controller
     /////////////////////////////////  VIEW  /////////////////////////////////
     /////////////////////////////////////////////////////////////////////////
 
-    public function index() //admin dashboard View
+    public function index()
     {
+        // Initialize UsersChart with advanced colorations
+        $users_data = User::selectRaw('MONTH(created_at) as month, COUNT(*) as count')
+            ->groupBy('month')
+            ->get();
+
+        $userChart = new UsersChart();
+        foreach ($users_data as $user) {
+            $userChart->labels[] = date('F', mktime(0, 0, 0, $user->month, 1));
+            $userChart->dataset('Users Created', 'line', [$user->count])
+                ->backgroundColor('rgba(255, 99, 132, 0.2)') // Light red background color for dataset
+                ->color('rgba(255, 99, 132, 1)')              // Red color for dataset
+                ->options(['borderColor' => 'rgba(255, 99, 132, 1)']); // Red border color for dataset
+        }
+
+        // Initialize UserCityChart with advanced colorations
+        $usersByCity = User::select('ville', DB::raw('COUNT(*) as count'))
+            ->groupBy('ville')
+            ->orderBy('count', 'desc')
+            ->get();
+
+        $cityChart = new UserCityChart();
+        foreach ($usersByCity as $user) {
+            $cityChart->labels[] = $user->ville;
+            $cityChart->dataset('Users by City', 'bar', [$user->count])
+                ->backgroundColor(['#ffcc00', '#3399ff', '#ff6600']) // Custom background colors for bars
+                ->color(['#ffcc00', '#3399ff', '#ff6600']);           // Custom border colors for bars
+        }
+        // Fetch other data for the view
         $announcements = Announcement::all();
         $users = User::all();
         $categories = Category::all();
-        return view('admin.dashboard')->with(compact('announcements'))->with(compact('users'))->with(compact('categories'));
+
+        // Pass both charts and other data to the view
+        return view('admin.dashboard', compact('announcements', 'users', 'categories', 'userChart', 'cityChart'));
     }
+
 
     public function announcement() //admin announcement View
     {
@@ -373,5 +407,21 @@ class AdminDashboardController extends Controller
             return response()->json(['success' => true, 'message' => 'User activated successfully']);
         }
         return response()->json(['success' => false, 'message' => 'User not found']);
+    }
+    public function suspend_announcement($id)
+    {
+        $announcement = Announcement::findOrFail($id);
+        $announcement->is_active = false;
+        $announcement->save();
+
+        return response()->json(['message' => 'Announcement suspended successfully.']);
+    }
+    public function unsuspend_announcement($id)
+    {
+        $announcement = Announcement::findOrFail($id);
+        $announcement->is_active = true;
+        $announcement->save();
+
+        return response()->json(['message' => 'Announcement unsuspended successfully.']);
     }
 }
