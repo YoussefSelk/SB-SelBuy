@@ -1,39 +1,44 @@
 <x-app-layout>
-    <div class="container mx-auto">
-        <div class="max-w-xl mx-auto mt-10 bg-white p-6 rounded-lg shadow">
-            <h2 class="text-2xl font-semibold mb-4">Create a New Post</h2>
-            <form id="createPostForm" method="POST" action="{{ route('admin.posts.store') }}"
-                enctype="multipart/form-data">
-                @csrf
-                <div class="mb-4">
-                    <label for="title" class="block text-gray-700 text-sm font-bold mb-2">Title</label>
-                    <input type="text" name="title" id="title"
-                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500"
-                        placeholder="Enter title">
-                </div>
-                <div class="mb-4">
-                    <label for="description" class="block text-gray-700 text-sm font-bold mb-2">Description</label>
-                    <textarea name="description" id="description"
-                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500" rows="5"
-                        placeholder="Enter description"></textarea>
-                </div>
-                <div class="mb-4">
-                    <label for="image" class="block text-gray-700 text-sm font-bold mb-2">Image</label>
-                    <input type="file" name="image" id="image"
-                        class="w-full px-3 py-2 border rounded-md focus:outline-none focus:border-blue-500">
-                    <img id="imagePreview" class="mt-2 hidden" src="#" alt="Image preview"
-                        style="max-width: 100%; max-height: 200px;">
-                </div>
-                <div class="flex items-center justify-end">
-                    <button type="submit"
-                        class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Create
-                        Post</button>
-                </div>
-            </form>
+    <div
+        class="p-6 mb-4 bg-white rounded-md shadow-md overflow-hidden flex flex-col md:flex-row items-center justify-between dark:bg-dark-eval-1">
+        <div class="flex items-center">
+            <i class="fas fa-tag md:text-5xl text-blue-500 mr-4"></i>
+            <span class="text-xl md:text-2xl">{{ count($posts) }}</span>
+        </div>
+        <!-- Button to toggle modal -->
+        <button data-modal-target="crud-modal" data-modal-toggle="crud-modal"
+            class="block bg-blue-500 hover:bg-blue-600 text-white font-medium rounded-lg text-lg px-5 py-2.5 text-center focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+            <i class="fa fa-solid fa-plus"></i>
+            Add New Post
+        </button>
+    </div>
+    <div class="p-6 bg-white rounded-md shadow-md overflow-hidden">
+        <div class="overflow-x-auto">
+            <x-my-components.dash-table :headers="['#', 'Title', 'Actions']">
+                @foreach ($posts as $post)
+                    <tr class="border-b border-gray-200 dark:border-gray-600">
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $post->id }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">{{ $post->title }}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <a href="{{ route('admin.posts.edit.view', $post->id) }}"
+                                class="text-indigo-600 hover:text-indigo-900">
+                                <i class="fas fa-edit"></i> Edit
+                            </a>
+                            <form action="{{ route('admin.posts.delete', $post->id) }}" method="POST"
+                                class="inline delete-form">
+                                @csrf
+                                @method('DELETE')
+                                <button type="button" class="text-red-600 hover:text-red-900 ml-2 delete-btn">
+                                    <i class="fas fa-trash"></i> Delete
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                @endforeach
+            </x-my-components.dash-table>
         </div>
     </div>
 
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
     <script>
         $(document).ready(function() {
@@ -45,6 +50,33 @@
                 }
                 reader.readAsDataURL(file);
             });
+
+            $('.delete-btn').click(function(e) {
+                e.preventDefault();
+                const form = $(this).closest('form');
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        form.submit();
+                    }
+                });
+            });
         });
+
+        @if (session('success'))
+            toastr.success("{{ session('success') }}");
+        @endif
+
+        @if (session('error'))
+            toastr.error("{{ session('error') }}");
+        @endif
     </script>
 </x-app-layout>
+@include('modals.add-post-modal')

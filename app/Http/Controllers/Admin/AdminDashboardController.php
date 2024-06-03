@@ -91,7 +91,9 @@ class AdminDashboardController extends Controller
     public function edit_user_view($id)
     {
         $user = User::find($id);
-        return view('admin.CRUD.user.edit_user')->with(compact('user'));
+        $excludedRoleNames = ['SuperAdmin']; // Array of role names to exclude
+        $roles = Role::whereNotIn('name', $excludedRoleNames)->get();
+        return view('admin.CRUD.user.edit_user')->with(compact('user', 'roles'));
     }
 
     public function user_details($id)
@@ -120,9 +122,18 @@ class AdminDashboardController extends Controller
 
     public function create()
     {
-        return view('admin.post');
+        $posts = Post::all();
+        return view('admin.post')->with(compact('posts'));
     }
+    public function edit_post_view($id)
+    {
+        $post = Post::find($id);
 
+        if (!$post) {
+            return redirect()->route('posts.index')->with('error', 'Post not found');
+        }
+        return view('admin.CRUD.posts.edit-post', compact('post'));
+    }
 
     /////////////////////////////////////////////////////////////////////////
     ///////////////////////////////// CRUD  /////////////////////////////////
@@ -130,15 +141,20 @@ class AdminDashboardController extends Controller
 
     public function edit_user(Request $request, $id)
     {
+        // Validate the request data
         $request->validate([
             'name' => ['nullable', 'string', 'max:255'],
             'email' => ['nullable', 'string', 'email', 'max:255', Rule::unique('users')->ignore($id)],
-            'password' => ['nullable',],
-            'phone' => ['nullable',],
+            'password' => ['nullable'],
+            'phone' => ['nullable', 'string'],
+            'roles' => ['nullable', 'array'],
+            'roles.*' => ['exists:roles,id']
         ]);
 
+        // Find the user by ID
         $user = User::findOrFail($id);
 
+        // Update the user's information
         $user->update([
             'name' => $request->input('name'),
             'email' => $request->input('email'),
@@ -146,8 +162,13 @@ class AdminDashboardController extends Controller
             'phone' => $request->input('phone'),
         ]);
 
-        return redirect()->route('admin.users')
-            ->with('success', 'User updated successfully.');
+        // Sync user roles
+        if ($request->has('roles')) {
+            $user->syncRoles($request->input('roles'));
+        }
+
+        // Redirect with success message
+        return redirect()->route('admin.users')->with('success', 'User updated successfully.');
     }
 
     public function delete_user($id)
@@ -423,5 +444,88 @@ class AdminDashboardController extends Controller
         $announcement->save();
 
         return response()->json(['message' => 'Announcement unsuspended successfully.']);
+    }
+
+    public function edit_post(Request $request, $id)
+    {
+        $post = Post::find($id);
+
+        if (!$post) {
+            return redirect()->route('admin.posts.edit.view', $id)->with('error', 'Post not found');
+        }
+
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
+
+        $post->title = $request->input('title');
+        $post->description = $request->input('description');
+
+        if ($request->hasFile('image')) {
+            // Delete the old image if it exists and is not the default placeholder image
+            if ($post->image_url && $post->image_url !== 'https://via.placeholder.com/300x200.png?text=No+Image+Available') {
+                $oldImagePath = public_path($post->image_url);
+                if (file_exists($oldImagePath)) {
+                    unlink($oldImagePath);
+                }
+            }
+
+            // Store the new image
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->move(public_path('post_images'), $imageName);
+            $post->image_url = '/post_images/' . $imageName;
+        } else {
+            // If no new image is uploaded, retain the old image
+            if (!$post->image_url) {
+                $post->image_url = 'https://via.placeholder.com/300x200.png?text=No+Image+Available';
+            }
+        }
+
+        $post->save();
+
+        return redirect()->route('admin.posts.edit.view', $id)->with('success', 'Post updated successfully');
+    }
+
+
+
+    public function delete_post($id)
+    {
+        $post = Post::find($id);
+
+        if (!$post) {
+            return redirect()->route('posts.index')->with('error', 'Post not found');
+        }
+
+        // Delete the image if exists
+        if ($post->image_url) {
+            Storage::disk('public')->delete($post->image_url);
+        }
+
+        $post->delete();
+
+        return redirect()->back()->with('success', 'Post deleted successfully');
+    }
+    public function delete_image($id)
+    {
+        $post = Post::find($id);
+
+        if (!$post) {
+            return response()->json(['success' => false, 'message' => 'Post not found']);
+        }
+
+        // Delete the image if it exists and is not the default placeholder image
+        if ($post->image_url && $post->image_url !== 'https://via.placeholder.com/300x200.png?text=No+Image+Available') {
+            $oldImagePath = public_path($post->image_url);
+            if (file_exists($oldImagePath)) {
+                unlink($oldImagePath);
+            }
+        }
+
+        $post->image_url = 'https://via.placeholder.com/300x200.png?text=No+Image+Available';
+        $post->save();
+
+        return response()->json(['success' => true, 'message' => 'Image deleted successfully']);
     }
 }

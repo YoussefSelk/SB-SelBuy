@@ -130,7 +130,6 @@
                                 let conversationItem = `
                                     <li class="cursor-pointer p-2 hover:bg-gray-700" data-receiver-id="${receiverId}">
                                         <p>${receiverName}</p>
-                                        <p>${lastMessage}</p>
                                     </li>`;
                                 $("#conversation_list").append(conversationItem);
                             });

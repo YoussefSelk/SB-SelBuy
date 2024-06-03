@@ -4,7 +4,7 @@
     <div class="container mx-auto">
         <!-- Featured Products Section -->
         <div class="mb-12 mt-12">
-            <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Featured Products</h2>
+            <h2 class="text-3xl font-extrabold text-gray-900 mb-6">Favorite Products</h2>
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-8">
                 @foreach ($favorites as $product)
                     <!-- Product Card -->

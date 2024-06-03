@@ -135,6 +135,16 @@
                     <span class="ms-3">{{ __('Annoncements') }}</span>
                 </x-my-components.nav-link>
             </li>
+            <li>
+                <x-my-components.nav-link :href="route('admin.posts.create')" :active="request()->routeIs('admin.posts.create')">
+                    <svg class="w-5 h-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor"
+                        viewBox="0 0 20 20">
+                        <path
+                            d="M2 2.5A2.5 2.5 0 0 1 4.5 0h11A2.5 2.5 0 0 1 18 2.5v15a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 2 17.5v-15ZM4.5 1A1.5 1.5 0 0 0 3 2.5V6h14V2.5A1.5 1.5 0 0 0 15.5 1h-11Zm-1.5 7v9.5A1.5 1.5 0 0 0 4.5 19h11a1.5 1.5 0 0 0 1.5-1.5V8H3Zm4 1a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 7 9Zm4 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7Zm3.5-.5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5Z" />
+                    </svg>
+                    <span class="ms-3">{{ __('Posts') }}</span>
+                </x-my-components.nav-link>
+            </li>
         </ul>
     </div>
 </aside>

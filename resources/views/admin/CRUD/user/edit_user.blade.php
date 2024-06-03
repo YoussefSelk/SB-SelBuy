@@ -52,6 +52,20 @@
                                 class="mt-1 block w-full py-2.5 px-4 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 shadow-sm text-sm">
                         </div>
                     </div>
+                    <div class="mb-4">
+                        <label class="block text-sm font-medium text-gray-700">Roles</label>
+                        <div class="grid grid-cols-2 gap-4 mt-2">
+                            @foreach ($roles as $role)
+                                <div class="flex items-center">
+                                    <input type="checkbox" name="roles[]" value="{{ $role->id }}"
+                                        id="role_{{ $role->id }}" @if (in_array($role->id, $user->roles->pluck('id')->toArray())) checked @endif
+                                        class="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500">
+                                    <label for="role_{{ $role->id }}"
+                                        class="ml-2 block text-sm text-gray-700">{{ $role->name }}</label>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
                     <button type="submit"
                         class="mt-4 w-full inline-flex items-center justify-center px-4 py-2 border border-transparent rounded-md shadow-sm text-base font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                         Submit

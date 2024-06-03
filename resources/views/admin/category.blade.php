@@ -2,7 +2,7 @@
     <div
         class="p-6 mb-4 bg-white rounded-md shadow-md overflow-hidden flex flex-col md:flex-row items-center justify-between dark:bg-dark-eval-1">
         <div class="flex items-center">
-            <i class="fas fa-users text-4xl md:text-5xl text-blue-500 mr-4"></i>
+            <i class="fas fa-tag  md:text-5xl text-blue-500 mr-4"></i>
             <span class="text-xl md:text-2xl">{{ count($categories) }}</span>
         </div>
         <!-- Button to toggle modal -->
