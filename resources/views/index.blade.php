@@ -4,8 +4,8 @@
 @section('carousel')
     <div id="animation-carousel" class="relative w-full" data-carousel="static">
         <!-- Carousel wrapper -->
-        <div class="relative min-h-[700px] md:min-h-[700px] overflow-hidden">
-            <!-- Welcome Message (Hardcoded) -->
+        <div class="relative min-h-[700px] md:min-h-[700px] overflow-hidden m-2 rounded-lg">
+            <!-- Welcome Message -->
             <div class="hidden duration-200 ease-linear" data-carousel-item>
                 <div
                     class="bg-gradient-to-r from-zinc-900 via-zinc-800 to-zinc-700 text-white p-8 min-h-[700px] md:min-h-[700px] flex flex-col md:flex-row justify-around items-center">
@@ -70,82 +70,79 @@
             </svg>
         </button>
     </div>
-
+    <div class="animate__animated  animate__fadeIn mb-8 mt-8 ml-6  mr-6">
+        <form id="filterForm" action="{{ route('filter.announcements') }}" method="GET"
+            class="bg-gray-100 rounded-lg shadow-md p-6">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                <!-- Category Selector -->
+                <div>
+                    <label for="category" class="font-semibold block mb-2">Category:</label>
+                    <select name="category" id="category"
+                        class="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg focus:outline-none">
+                        <option value="">All</option>
+                        @foreach ($categories as $category)
+                            <option value="{{ $category->id }}">{{ $category->name }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <!-- Price Range Selector -->
+                <div>
+                    <label for="price_min" class="font-semibold block mb-2">Price Range:</label>
+                    <div class="flex">
+                        <select name="price_min" id="price_min"
+                            class="flex-grow px-4 py-2 bg-gray-200 text-gray-800 rounded-lg mr-2 focus:outline-none">
+                            <option value="">Min</option>
+                            <option value="0">MAD 0</option>
+                            <option value="50">MAD 50</option>
+                            <option value="100">MAD 100</option>
+                            <option value="200">MAD 200</option>
+                            <option value="500">MAD 500</option>
+                            <option value="1000">MAD 1000</option>
+                            <option value="2000">MAD 2000</option>
+                            <option value="5000">MAD 5000</option>
+                            <option value="10000">MAD 10000</option>
+                        </select>
+                        <span class="mx-2">-</span>
+                        <select name="price_max" id="price_max"
+                            class="flex-grow px-4 py-2 bg-gray-200 text-gray-800 rounded-lg ml-2 focus:outline-none">
+                            <option value="">Max</option>
+                            <option value="50">MAD 50</option>
+                            <option value="100">MAD 100</option>
+                            <option value="200">MAD 200</option>
+                            <option value="500">MAD 500</option>
+                            <option value="1000">MAD 1000</option>
+                            <option value="2000">MAD 2000</option>
+                            <option value="5000">MAD 5000</option>
+                            <option value="10000">MAD 10000</option>
+                        </select>
+                    </div>
+                </div>
+                <!-- Search Input -->
+                <div class="col-span-2">
+                    <label for="search" class="font-semibold block mb-2">Search:</label>
+                    <input type="text" id="search" name="search"
+                        class="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg focus:outline-none"
+                        placeholder="Search...">
+                </div>
+                <!-- Apply Filters Button -->
+                <div class="col-span-3 sm:col-span-2 lg:col-span-1">
+                    <button type="submit"
+                        class="w-full  px-4 py-2 bg-[#E74694] text-white rounded-lg hover:text-black focus:outline-none">Apply
+                        Filters</button>
+                </div>
+            </div>
+        </form>
+    </div>
 @endsection
 @section('content')
     <div class="container mx-auto px-4">
         <!-- Filter Section -->
-        <div class="animate__animated  animate__fadeIn mb-8 mt-8">
-            <h2 class="text-2xl font-bold mb-2">Filter:</h2>
-            <form id="filterForm" action="{{ route('filter.announcements') }}" method="GET"
-                class="bg-gray-100 rounded-lg shadow-md p-6">
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                    <!-- Category Selector -->
-                    <div>
-                        <label for="category" class="font-semibold block mb-2">Category:</label>
-                        <select name="category" id="category"
-                            class="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg focus:outline-none">
-                            <option value="">All</option>
-                            @foreach ($categories as $category)
-                                <option value="{{ $category->id }}">{{ $category->name }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <!-- Price Range Selector -->
-                    <div>
-                        <label for="price_min" class="font-semibold block mb-2">Price Range:</label>
-                        <div class="flex">
-                            <select name="price_min" id="price_min"
-                                class="flex-grow px-4 py-2 bg-gray-200 text-gray-800 rounded-lg mr-2 focus:outline-none">
-                                <option value="">Min</option>
-                                <option value="0">MAD 0</option>
-                                <option value="50">MAD 50</option>
-                                <option value="100">MAD 100</option>
-                                <option value="200">MAD 200</option>
-                                <option value="500">MAD 500</option>
-                                <option value="1000">MAD 1000</option>
-                                <option value="2000">MAD 2000</option>
-                                <option value="5000">MAD 5000</option>
-                                <option value="10000">MAD 10000</option>
-                            </select>
-                            <span class="mx-2">-</span>
-                            <select name="price_max" id="price_max"
-                                class="flex-grow px-4 py-2 bg-gray-200 text-gray-800 rounded-lg ml-2 focus:outline-none">
-                                <option value="">Max</option>
-                                <option value="50">MAD 50</option>
-                                <option value="100">MAD 100</option>
-                                <option value="200">MAD 200</option>
-                                <option value="500">MAD 500</option>
-                                <option value="1000">MAD 1000</option>
-                                <option value="2000">MAD 2000</option>
-                                <option value="5000">MAD 5000</option>
-                                <option value="10000">MAD 10000</option>
-                            </select>
-                        </div>
-                    </div>
-                    <!-- Search Input -->
-                    <div class="col-span-2">
-                        <label for="search" class="font-semibold block mb-2">Search:</label>
-                        <input type="text" id="search" name="search"
-                            class="w-full px-4 py-2 bg-gray-200 text-gray-800 rounded-lg focus:outline-none"
-                            placeholder="Search...">
-                    </div>
-                    <!-- Apply Filters Button -->
-                    <div class="col-span-3 sm:col-span-2 lg:col-span-1">
-                        <button type="submit"
-                            class="w-full px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none">Apply
-                            Filters</button>
-                    </div>
-                </div>
-            </form>
-        </div>
+
 
         <div id="announcementsContainer"
             class="animate__animated  animate__fadeIn  grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-x-6 gap-y-8 mb-12">
             <!-- Filtered announcements will be displayed here -->
         </div>
-
-
 
         <!-- Featured Products Section -->
         <div class="animate__animated  animate__fadeIn  mb-12 mt-12">
@@ -210,7 +207,6 @@
                                         @endif
                                     @else
                                         <p>Please Login to add to favorites.</p>
-
                                     @endif
                                 </div>
                             </div>

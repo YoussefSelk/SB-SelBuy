@@ -14,22 +14,39 @@
             </button>
         </div>
 
-        <div class="hidden md:flex items-center justify-center flex-1 space-x-4">
-            <ul class="flex space-x-4">
-                <li><a href="{{ route('home') }}" class="hover:text-gray-300 text-gray-700">Home</a></li>
-                <li><a href="#" class="hover:text-gray-300 text-gray-700">Contact</a></li>
-                <li><a href="{{ route('about.us') }}" class="hover:text-gray-300 text-gray-700">About Us</a></li>
-                <li><a href="#" class="hover:text-gray-300 text-gray-700">FAQ</a></li>
+        <div class="hidden md:flex items-center justify-center flex-1 space-x-6">
+            <ul class="flex space-x-6">
                 <li>
-                    <a href="{{ route('privacy.policy') }}" class="hover:text-gray-300 text-gray-700">Privacy Policy</a>
+                    <a href="{{ route('home') }}"
+                        class="text-gray-700 hover:text-white hover:bg-[#E74694] py-1 px-3 rounded-md transition-all duration-300 ease-in-out">Home</a>
                 </li>
                 <li>
-                    <a href="{{ route('terms.and.conditions') }}" class="hover:text-gray-300 text-gray-700">
-                        Terms & Conditions
-                    </a>
+                    <a href="#"
+                        class="text-gray-700 hover:text-white hover:bg-[#E74694] py-1 px-3 rounded-md transition-all duration-300 ease-in-out">Contact</a>
+                </li>
+                <li>
+                    <a href="{{ route('about.us') }}"
+                        class="text-gray-700 hover:text-white hover:bg-[#E74694] py-1 px-3 rounded-md transition-all duration-300 ease-in-out">About
+                        Us</a>
+                </li>
+                <li>
+                    <a href="#"
+                        class="text-gray-700 hover:text-white hover:bg-[#E74694] py-1 px-3 rounded-md transition-all duration-300 ease-in-out">FAQ</a>
+                </li>
+                <li>
+                    <a href="{{ route('privacy.policy') }}"
+                        class="text-gray-700 hover:text-white hover:bg-[#E74694] py-1 px-3 rounded-md transition-all duration-300 ease-in-out">Privacy
+                        Policy</a>
+                </li>
+                <li>
+                    <a href="{{ route('terms.and.conditions') }}"
+                        class="text-gray-700 hover:text-white hover:bg-[#E74694] py-1 px-3 rounded-md transition-all duration-300 ease-in-out">Terms
+                        & Conditions</a>
                 </li>
             </ul>
         </div>
+
+
         @if (Auth::check() && Auth::user()->hasRole('Seller') && Auth::user()->hasRole('Buyer'))
             <div class="hidden md:flex items-center mr-4">
                 <a href="{{ route('chat.conversations') }} " class="text-blue-500 hover:text-blue-700">
