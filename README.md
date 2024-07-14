@@ -47,8 +47,8 @@ Follow these steps to set up the project locally:
 
 1. **Clone the repository:**
     ```bash
-    git clone https://github.com/yourusername/selbuy.git
-    cd selbuy
+    git clone https://github.com/YoussefSelk/SB-SelBuy.git
+    cd SB-SelBuy
     ```
 
 2. **Install Composer dependencies:**
@@ -73,7 +73,7 @@ Follow these steps to set up the project locally:
     php artisan migrate
     ```
 
-6. **Seed the database (optional):**
+6. **Seed the database :**
     ```bash
     php artisan db:seed
     ```
