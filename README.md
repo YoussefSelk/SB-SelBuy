@@ -108,4 +108,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Contact 📧
 
-If you want to contact me, you can reach me at [clarkthomp@gmail.com](mailto:clarkthomp@gmail.com).
+If you want to contact me, you can reach me at [youssefselk.dev@gmail.com](mailto:youssefselk.dev@gmail.com).
